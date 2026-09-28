@@ -71,7 +71,7 @@ SELECT move_chunk(
   chunk => '_timescaledb_internal._hyper_1_4_chunk',
   destination_tablespace => 'history',
   index_destination_tablespace => 'history',
-  reorder_index => '_timescaledb_internal._hyper_1_4_chunk_netdata_time_idx',
+  reorder_index => '_timescaledb_internal._hyper_1_4_chunk_conditions_time_idx',
   verbose => TRUE
 );
 ```
@@ -101,7 +101,8 @@ and 3 weeks old, in a hypertable named `example`:
 ```sql
 SELECT move_chunk(
   chunk => i,
-  destination_tablespace => '<TABLESPACE>')
+  destination_tablespace => '<TABLESPACE>',
+  index_destination_tablespace => '<TABLESPACE>')
 FROM show_chunks('example', now() - INTERVAL '1 week', now() - INTERVAL '3 weeks') i;
 ```
 
@@ -115,7 +116,7 @@ SELECT move_chunk(
   chunk => '_timescaledb_internal._hyper_1_4_chunk',
   destination_tablespace => 'pg_default',
   index_destination_tablespace => 'pg_default',
-  reorder_index => '_timescaledb_internal._hyper_1_4_chunk_netdata_time_idx'
+  reorder_index => '_timescaledb_internal._hyper_1_4_chunk_conditions_time_idx'
 );
 ```
 
@@ -127,7 +128,7 @@ SELECT move_chunk(
   chunk => '_timescaledb_internal._hyper_1_4_chunk',
   destination_tablespace => 'history',
   index_destination_tablespace => 'pg_default',
-  reorder_index => '_timescaledb_internal._hyper_1_4_chunk_netdata_time_idx'
+  reorder_index => '_timescaledb_internal._hyper_1_4_chunk_conditions_time_idx'
 );
 ```
 
