@@ -74,7 +74,7 @@ postgres -c log_connections=yes -c log_destination='syslog'
 2. run SQL: `SHOW config_file;`
 3. expect rows: `SELECT 1 FROM pg_settings WHERE name = 'config_file' AND setting LIKE '%/postgresql.conf'`
 4. run command: `echo "log_connections = on" | sudo -u postgres tee -a "$(sudo -u postgres psql -d postgres -tAc 'SHOW config_file;')"`
-5. run command: `sudo -u postgres /usr/lib/postgresql/18/bin/pg_ctl reload -D /var/lib/postgresql/18/main`
+5. run SQL: `SELECT pg_reload_conf();`
 6. expect rows: `SELECT 1 FROM pg_settings WHERE name = 'log_connections' AND setting = 'on'`
 
 Not scripted:
