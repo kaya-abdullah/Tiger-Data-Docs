@@ -9,6 +9,7 @@ import * as C from "@constants";
 import { Callout } from "@stainless-api/docs/components";
 import { NumberedList, NumberedItem } from "@components/NumberedList";
 import PrivacyPolicy from "../../../../../partials/_privacy-policy.mdx";
+import TestPlan from "@components/TestPlan.astro";
 
 {C.TIMESCALE_DB} collects anonymous usage data to help us better understand and assist
 our users. It also helps us provide some services, such as automated version
@@ -287,3 +288,24 @@ This enables telemetry for the whole instance. To change it for one database onl
 `ALTER DATABASE <DATABASE_NAME> SET timescaledb.telemetry_level = basic;` instead.
 </NumberedItem>
 </NumberedList>
+
+<TestPlan>
+
+1. fork the self-hosted service
+2. run SQL: `CREATE EXTENSION IF NOT EXISTS timescaledb;`
+3. expect rows: `SELECT 1 FROM pg_settings WHERE name = 'timescaledb.telemetry_level' AND setting = 'basic'`
+4. run command: `echo "timescaledb.telemetry_level=off" | sudo -u postgres tee -a "$(sudo -u postgres psql -d postgres -tAc 'SHOW config_file;')"`
+5. run SQL: `SELECT pg_reload_conf();`
+6. expect rows: `SELECT 1 FROM pg_settings WHERE name = 'timescaledb.telemetry_level' AND setting = 'off'`
+7. run SQL: `ALTER SYSTEM SET timescaledb.telemetry_level=basic;`
+8. run SQL: `SELECT pg_reload_conf();`
+9. expect rows: `SELECT 1 FROM pg_settings WHERE name = 'timescaledb.telemetry_level' AND setting = 'basic'`
+10. run SQL: `ALTER SYSTEM RESET timescaledb.telemetry_level;`
+11. run command: `sudo -u postgres sed -i 's/^timescaledb.telemetry_level=off$/timescaledb.telemetry_level=basic/' "$(sudo -u postgres psql -d postgres -tAc 'SHOW config_file;')"`
+12. run SQL: `SELECT pg_reload_conf();`
+13. expect rows: `SELECT 1 FROM pg_settings WHERE name = 'timescaledb.telemetry_level' AND setting = 'basic'`
+14. run SQL: `ALTER SYSTEM SET timescaledb.telemetry_level=off;`
+15. run SQL: `SELECT pg_reload_conf();`
+16. expect rows: `SELECT 1 FROM pg_settings WHERE name = 'timescaledb.telemetry_level' AND setting = 'off'`
+
+</TestPlan>
