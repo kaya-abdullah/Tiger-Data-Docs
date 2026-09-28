@@ -231,9 +231,14 @@ timescaledb.telemetry_level=off
 ```
 </NumberedItem>
 <NumberedItem title="Reload the configuration file">
-```bash
-pg_ctl
+Connect with `psql` as a superuser and run:
+
+```sql
+SELECT pg_reload_conf();
 ```
+
+You can also run `pg_ctl reload` from a shell. On Debian and Ubuntu package installs, `pg_ctl` is not on
+the path; use `pg_ctlcluster <VERSION> main reload` instead.
 
 Alternatively, you can use this command at the `psql` prompt, as the root
 user:
@@ -260,9 +265,14 @@ timescaledb.telemetry_level=basic
 ```
 </NumberedItem>
 <NumberedItem title="Reload the configuration file">
-```bash
-pg_ctl
+Connect with `psql` as a superuser and run:
+
+```sql
+SELECT pg_reload_conf();
 ```
+
+You can also run `pg_ctl reload` from a shell. On Debian and Ubuntu package installs, `pg_ctl` is not on
+the path; use `pg_ctlcluster <VERSION> main reload` instead.
 
 Alternatively, you can use this command at the `psql` prompt, as the root user:
 
