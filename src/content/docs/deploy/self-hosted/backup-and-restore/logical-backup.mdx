@@ -72,13 +72,13 @@ You may see some errors while `pg_dump` is running. These can usually be safely 
    SELECT timescaledb_pre_restore();
    ```
 
-1. Restore the database:
+1. Exit `psql`, then restore the database from your shell:
 
-   ```sql
+   ```bash
    pg_restore -Fc -d <restoration database> <db_name>.bak
    ```
 
-1. Return your database to normal operations:
+1. Connect to `<restoration database>` with `psql` again, then return your database to normal operations:
 
    ```sql
    SELECT timescaledb_post_restore();
