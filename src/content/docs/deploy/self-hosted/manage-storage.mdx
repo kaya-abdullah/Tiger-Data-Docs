@@ -158,7 +158,7 @@ framework. For more information, see the [jobs section](/reference/timescaledb/j
 15. expect rows: `SELECT 1 FROM pg_indexes WHERE tablespace = 'history' AND indexname = '_hyper_1_4_chunk_conditions_time_idx'`
 16. run SQL: `CREATE TABLE example (time timestamptz NOT NULL, value double precision) WITH (tsdb.hypertable, tsdb.partition_column = 'time');`
 17. run SQL: `INSERT INTO example SELECT t, random() FROM generate_series(now() - INTERVAL '34 days', now(), INTERVAL '1 hour') AS t;`
-18. run SQL: `SELECT move_chunk(chunk => i, destination_tablespace => 'history', index_destination_tablespace => 'history') FROM show_chunks('example', now() - INTERVAL '1 week', now() - INTERVAL '3 weeks') i;`
+18. run SQL: `SELECT move_chunk(chunk => i, destination_tablespace => 'history', index_destination_tablespace => 'history', reorder_index => 'example_time_idx') FROM show_chunks('example', now() - INTERVAL '1 week', now() - INTERVAL '3 weeks') i;`
 19. expect rows: `SELECT 1 FROM pg_tables t JOIN timescaledb_information.chunks c ON c.chunk_name = t.tablename WHERE c.hypertable_name = 'example' AND t.tablespace = 'history'`
 20. expect no rows: `SELECT 1 FROM pg_tables t JOIN timescaledb_information.chunks c ON c.chunk_name = t.tablename WHERE c.hypertable_name = 'example' AND t.tablespace = 'history' AND c.range_end > now() - INTERVAL '1 week'`
 21. run SQL: `SELECT move_chunk(chunk => '_timescaledb_internal._hyper_1_4_chunk', destination_tablespace => 'pg_default', index_destination_tablespace => 'pg_default', reorder_index => '_timescaledb_internal._hyper_1_4_chunk_conditions_time_idx');`
