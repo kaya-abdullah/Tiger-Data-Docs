@@ -168,21 +168,21 @@ and privilege grants. You restore the {C.PG} instance using `psql`. For more inf
 3. run SQL: `CREATE TABLE conditions (time timestamptz NOT NULL, device text, temperature double precision, humidity double precision) WITH (tsdb.hypertable, tsdb.partition_column = 'time');`
 4. run SQL: `INSERT INTO conditions SELECT t, 'dev-' || (i % 10), 20 + random() * 10, 40 + random() * 20 FROM generate_series(now() - INTERVAL '30 days', now(), INTERVAL '1 hour') WITH ORDINALITY AS g(t, i);`
 5. expect rows: `SELECT 1 FROM timescaledb_information.hypertables WHERE hypertable_name = 'conditions'`
-6. run command: `sudo -u postgres pg_dump -d postgres -Fc -f /tmp/postgres.bak`
+6. run command: `sudo -u postgres pg_dump -d postgres -Fc -f postgres.bak`
 7. run SQL: `CREATE DATABASE restored;`
 8. run command: `sudo -u postgres psql -d restored -c "CREATE EXTENSION IF NOT EXISTS timescaledb;"`
 9. run command: `sudo -u postgres psql -d restored -c "SELECT timescaledb_pre_restore();"`
-10. run command: `sudo -u postgres pg_restore -Fc -d restored /tmp/postgres.bak`
+10. run command: `sudo -u postgres pg_restore -Fc -d restored postgres.bak`
 11. run command: `sudo -u postgres psql -d restored -c "SELECT timescaledb_post_restore();"`
 12. run command: `test "$(sudo -u postgres psql -d restored -tAc "SELECT count(*) FROM timescaledb_information.hypertables WHERE hypertable_name = 'conditions'")" = 1`
 13. run command: `test "$(sudo -u postgres psql -d restored -tAc "SELECT count(*) FROM conditions")" = "$(sudo -u postgres psql -d postgres -tAc "SELECT count(*) FROM conditions")"`
-14. run command: `sudo -u postgres pg_dump -s -d postgres --table conditions > /tmp/schema.sql`
-15. run command: `sudo -u postgres psql -d postgres -c "\COPY (SELECT * FROM conditions) TO /tmp/conditions.csv DELIMITER ',' CSV"`
+14. run command: `sudo -u postgres pg_dump -s -d postgres --table conditions > schema.sql`
+15. run command: `sudo -u postgres psql -d postgres -c "\COPY (SELECT * FROM conditions) TO conditions.csv DELIMITER ',' CSV"`
 16. run SQL: `CREATE DATABASE restored_tables;`
 17. run command: `sudo -u postgres psql -d restored_tables -c "CREATE EXTENSION IF NOT EXISTS timescaledb;"`
-18. run command: `sudo -u postgres psql -d restored_tables < /tmp/schema.sql`
+18. run command: `sudo -u postgres psql -d restored_tables < schema.sql`
 19. run command: `sudo -u postgres psql -d restored_tables -c "SELECT create_hypertable('conditions', 'time')"`
-20. run command: `sudo -u postgres psql -d restored_tables -c "\COPY conditions FROM /tmp/conditions.csv CSV"`
+20. run command: `sudo -u postgres psql -d restored_tables -c "\COPY conditions FROM conditions.csv CSV"`
 21. run command: `test "$(sudo -u postgres psql -d restored_tables -tAc "SELECT count(*) FROM conditions")" = "$(sudo -u postgres psql -d postgres -tAc "SELECT count(*) FROM conditions")"`
 
 </TestPlan>
