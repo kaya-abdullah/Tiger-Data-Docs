@@ -248,8 +248,8 @@ as above:
 ALTER SYSTEM SET timescaledb.telemetry_level = off;
 ```
 
-This disables telemetry for the whole instance. To scope it to one database or one user, run
-`ALTER DATABASE <DATABASE_NAME> SET` or `ALTER USER <USER_NAME> SET` with the same parameter instead.
+This disables telemetry for the whole instance. To change it for one database only, run
+`ALTER DATABASE <DATABASE_NAME> SET timescaledb.telemetry_level = off;` instead.
 </NumberedItem>
 </NumberedList>
 
@@ -283,7 +283,7 @@ as above:
 ALTER SYSTEM SET timescaledb.telemetry_level = basic;
 ```
 
-This enables telemetry for the whole instance. To scope it to one database or one user, run
-`ALTER DATABASE <DATABASE_NAME> SET` or `ALTER USER <USER_NAME> SET` with the same parameter instead.
+This enables telemetry for the whole instance. To change it for one database only, run
+`ALTER DATABASE <DATABASE_NAME> SET timescaledb.telemetry_level = basic;` instead.
 </NumberedItem>
 </NumberedList>
