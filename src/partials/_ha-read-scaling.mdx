@@ -127,7 +127,7 @@ You see a list of configured {C.READ_REPLICA} sets for this {C.SERVICE_SHORT}, i
 
 1. Select the replica set in the list.
 1. Click `Operations` > `Database parameters`.
-1. Adjust `max_standby_streaming_delay` and `max_standby_archive_delay`. This is not recommended for cases where changes must be immediately represented, for example, for user credentials.
+1. Adjust `max_standby_streaming_delay` and `max_standby_archive_delay`, then click `Apply changes` and confirm. This is not recommended for cases where changes must be immediately represented, for example, for user credentials.
 
 </NumberedItem>
 
@@ -182,16 +182,19 @@ Confirm the deletion when prompted.
 23. click `Operations` > `Database parameters`
 24. edit `max_standby_streaming_delay`
 25. edit `max_standby_archive_delay`
-26. [resolve: expand the read replica set under the primary service]
-27. click `Operations` > `Compute and storage`
-28. choose an unselected option
-29. click `Apply`
-30. confirm `Confirm`
-31. select the service
-32. click `Operations` > `Read scaling`
-33. click `Delete`
-34. type the value the dialog asks for
-35. confirm `Delete replica set`
+26. click `Apply changes`
+27. confirm `Confirm`
+28. expect no label `Apply changes?`
+29. [resolve: expand the read replica set under the primary service]
+30. click `Operations` > `Compute and storage`
+31. choose an unselected option
+32. click `Apply`
+33. confirm `Confirm`
+34. select the service
+35. click `Operations` > `Read scaling`
+36. [resolve: trash icon next to the replica set]
+37. type the value the dialog asks for
+38. confirm `Delete replica set`
 
 </TestPlan>
 
