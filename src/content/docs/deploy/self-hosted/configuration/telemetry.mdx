@@ -221,7 +221,8 @@ If you turn off telemetry, the version checking feature is also turned off.
 
 <NumberedList>
 <NumberedItem title={`Open your ${C.PG} configuration file`}>
-Locate the `timescaledb.telemetry_level` parameter. See the
+Locate the `timescaledb.telemetry_level` parameter, or add it: a fresh install does not set it, and
+the default is `basic`. See the
 [{C.PG} configuration file](/deploy/self-hosted/configuration/postgres-config) instructions for locating
 and opening the file.
 </NumberedItem>
