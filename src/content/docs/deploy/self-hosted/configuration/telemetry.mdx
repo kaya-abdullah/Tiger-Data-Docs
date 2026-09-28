@@ -241,14 +241,15 @@ SELECT pg_reload_conf();
 You can also run `pg_ctl reload` from a shell. On Debian and Ubuntu package installs, `pg_ctl` is not on
 the path; use `pg_ctlcluster <VERSION> main reload` instead.
 
-Alternatively, you can use this command at the `psql` prompt, as the root
-user:
+Alternatively, instead of editing the file, run this at the `psql` prompt as a superuser, then reload
+as above:
 
 ```sql
-ALTER [SYSTEM | DATABASE | USER] { *db_name* | *role_specification* } SET timescaledb.telemetry_level=off
+ALTER SYSTEM SET timescaledb.telemetry_level = off;
 ```
 
-This command disables telemetry for the specified system, database, or user.
+This disables telemetry for the whole instance. To scope it to one database or one user, run
+`ALTER DATABASE <DATABASE_NAME> SET` or `ALTER USER <USER_NAME> SET` with the same parameter instead.
 </NumberedItem>
 </NumberedList>
 
@@ -275,12 +276,14 @@ SELECT pg_reload_conf();
 You can also run `pg_ctl reload` from a shell. On Debian and Ubuntu package installs, `pg_ctl` is not on
 the path; use `pg_ctlcluster <VERSION> main reload` instead.
 
-Alternatively, you can use this command at the `psql` prompt, as the root user:
+Alternatively, instead of editing the file, run this at the `psql` prompt as a superuser, then reload
+as above:
 
 ```sql
-ALTER [SYSTEM | DATABASE | USER] { *db_name* | *role_specification* } SET timescaledb.telemetry_level=basic
+ALTER SYSTEM SET timescaledb.telemetry_level = basic;
 ```
 
-This command enables telemetry for the specified system, database, or user.
+This enables telemetry for the whole instance. To scope it to one database or one user, run
+`ALTER DATABASE <DATABASE_NAME> SET` or `ALTER USER <USER_NAME> SET` with the same parameter instead.
 </NumberedItem>
 </NumberedList>
