@@ -67,3 +67,17 @@ For example:
 ```sql
 postgres -c log_connections=yes -c log_destination='syslog'
 ```
+
+<TestPlan>
+
+1. fork the self-hosted service
+2. run SQL: `SHOW config_file;`
+3. expect rows: `SELECT 1 FROM pg_settings WHERE name = 'config_file' AND setting LIKE '%/postgresql.conf'`
+4. run command: `echo "log_connections = on" | sudo -u postgres tee -a "$(sudo -u postgres psql -d postgres -tAc 'SHOW config_file;')"`
+5. run command: `sudo -u postgres /usr/lib/postgresql/18/bin/pg_ctl reload -D /var/lib/postgresql/18/main`
+6. expect rows: `SELECT 1 FROM pg_settings WHERE name = 'log_connections' AND setting = 'on'`
+
+Not scripted:
+- Setting parameters at the command prompt: `postgres -c …` starts a second server process, and the target already runs one.
+
+</TestPlan>

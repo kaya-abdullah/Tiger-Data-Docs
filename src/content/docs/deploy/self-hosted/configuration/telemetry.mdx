@@ -273,3 +273,24 @@ ALTER [SYSTEM | DATABASE | USER] { *db_name* | *role_specification* } SET timesc
 This command enables telemetry for the specified system, database, or user.
 </NumberedItem>
 </NumberedList>
+
+<TestPlan>
+
+1. fork the self-hosted service
+2. run SQL: `CREATE EXTENSION IF NOT EXISTS timescaledb;`
+3. expect rows: `SELECT 1 FROM pg_settings WHERE name = 'timescaledb.telemetry_level' AND setting = 'basic'`
+4. run command: `echo "timescaledb.telemetry_level=off" | sudo -u postgres tee -a "$(sudo -u postgres psql -d postgres -tAc 'SHOW config_file;')"`
+5. run command: `sudo -u postgres /usr/lib/postgresql/18/bin/pg_ctl reload -D /var/lib/postgresql/18/main`
+6. expect rows: `SELECT 1 FROM pg_settings WHERE name = 'timescaledb.telemetry_level' AND setting = 'off'`
+7. run SQL: `ALTER SYSTEM SET timescaledb.telemetry_level=basic;`
+8. run command: `sudo -u postgres /usr/lib/postgresql/18/bin/pg_ctl reload -D /var/lib/postgresql/18/main`
+9. expect rows: `SELECT 1 FROM pg_settings WHERE name = 'timescaledb.telemetry_level' AND setting = 'basic'`
+10. run SQL: `ALTER SYSTEM RESET timescaledb.telemetry_level;`
+11. run command: `sudo -u postgres sed -i 's/^timescaledb.telemetry_level=off$/timescaledb.telemetry_level=basic/' "$(sudo -u postgres psql -d postgres -tAc 'SHOW config_file;')"`
+12. run command: `sudo -u postgres /usr/lib/postgresql/18/bin/pg_ctl reload -D /var/lib/postgresql/18/main`
+13. expect rows: `SELECT 1 FROM pg_settings WHERE name = 'timescaledb.telemetry_level' AND setting = 'basic'`
+14. run SQL: `ALTER SYSTEM SET timescaledb.telemetry_level=off;`
+15. run command: `sudo -u postgres /usr/lib/postgresql/18/bin/pg_ctl reload -D /var/lib/postgresql/18/main`
+16. expect rows: `SELECT 1 FROM pg_settings WHERE name = 'timescaledb.telemetry_level' AND setting = 'off'`
+
+</TestPlan>
