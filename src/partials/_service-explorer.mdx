@@ -1,14 +1,10 @@
 import * as C from "@constants";
 
-import { Image } from "astro:assets";
-import imgTigerConsoleServiceExplorer from "../assets/images/deploy/tiger-cloud/tiger-console-service-explorer.png";
-import imgTigerConsoleColumstoreDataSavings from "../assets/images/deploy/tiger-cloud/tiger-console-columstore-data-savings.png";
-import imgTigerConsoleServiceExplorerCaggs from "../assets/images/deploy/tiger-cloud/tiger-console-service-explorer-caggs.png";
-
 {C.SERVICE_SHORT_CAP} explorer in {C.CONSOLE} provides a rich administrative dashboard for
 understanding the state of your database instance. The explorer gives you
 insight into the performance of your database, giving you greater confidence and
-control over your data.
+control over your data. You can also write, run, and save queries directly in the
+explorer, so you manage and debug your database without switching context.
 
 The explorer works like an operations center as you develop and run your
 applications with {C.CLOUD_LONG}. It gives you quick access to the key properties of
@@ -18,40 +14,60 @@ and continuous aggregates.
 
 To see the explorer, select your {C.SERVICE_SHORT} in {C.CONSOLE_SHORT} and click `Explorer`.
 
-## General information
+## Browse your database objects
 
-In the `General information` section, you can see a high-level
-summary of your {C.SERVICE_SHORT}, including all your hypertables and
-relational tables. It summarizes your overall compression ratios, and other
-policy and continuous aggregate data. And, if you aren't already using key features like continuous aggregates, columnstore compression, or other automation policies and actions, it provides pointers to tutorials and documentation to help you get started.
+In the `Schemas` pane, you can see the schemas in your {C.SERVICE_SHORT} and the objects
+they contain. To find an object quickly, search by name, or filter by object type:
+`Hypertables`, `Tables`, or `Caggs`. To include {C.PG} catalog objects, enable
+`Show catalog objects`.
 
-<Image src={imgTigerConsoleServiceExplorer} alt="Service explorer" />
+When you select an object, it opens in its own tab. Tabs stay open as you work, so
+you can keep several objects open at the same time and quickly switch between
+them, for example, to compare the configuration of two {C.HYPERTABLE}s.
 
-## Tables
+## The home tab
 
-You can have a detailed look into all your tables, including information about table schemas, table indexes, and
-foreign keys. For your hypertables, it shows details about chunks, continuous
-aggregates, and policies such as data retention policies and data reordering.
-You can also inspect individual hypertables, including their sizes, dimension
-ranges, and columnstore compression status.
+The home tab is always available and gives you a high-level summary of your
+{C.SERVICE_SHORT} in one place, including:
 
-From this section, you can also set an automated policy to compress chunks into the columnstore. For more information,
-see the [hypercore documentation](/learn/columnar-storage/understand-hypercore).
+- All your hypertables and relational tables.
+- Overall compression ratios and {C.COLUMNSTORE} status.
+- Continuous aggregates, including top-level information such as their size,
+  whether they are configured for real-time aggregation, and their refresh periods.
+- Data tiering.
+- Policies and other automation.
+
+If you aren't already using key features like continuous aggregates, {C.COLUMNSTORE}
+compression, or other automation policies and actions, the home tab provides
+pointers to tutorials and documentation to help you get started.
+
+## Inspect tables and hypertables
+
+Open a table in its own tab to have a detailed look at it, including information
+about table schemas, table indexes, and foreign keys. For your hypertables, the
+tab shows details such as size, approximate row count, {C.CHUNK}s, and the current
+and recommended {C.CHUNK} intervals. You can also inspect individual hypertables,
+including their sizes, dimension ranges, and {C.COLUMNSTORE} compression status.
+
+From an object tab, you can also create a {C.CAGG} or set an automated policy to
+compress {C.CHUNK}s into the {C.COLUMNSTORE}. For more information, see the
+[hypercore documentation](/learn/columnar-storage/understand-hypercore).
 
 When you inspect a {C.HYPERTABLE}, a timeline chart visualizes its {C.CHUNK}s, showing their relative sizes and whether each is in the {C.ROWSTORE} or the {C.COLUMNSTORE}. By default, the chart shows the latest 100 {C.CHUNK}s; click and drag to zoom in on a specific time range. The chart also shows the status of the latest runs for the {C.HYPERTABLE}'s {C.COLUMNSTORE} job, with a link to the job's deep dive page.
 
-<Image src={imgTigerConsoleColumstoreDataSavings} alt="Service explorer tables" />
-
 For more information about hypertables, see the
-[hypertables section](/learn/hypertables/understand-hypertables).
-
-## Continuous aggregates
-
-In the `Continuous aggregate` section, you can see all your continuous
-aggregates, including top-level information such as their size, whether they are
-configured for real-time aggregation, and their refresh periods.
-
-<Image src={imgTigerConsoleServiceExplorerCaggs} alt="Service explorer caggs" />
-
-For more information about continuous aggregates, see the
+[hypertables section](/learn/hypertables/understand-hypertables). For more
+information about continuous aggregates, see the
 [continuous aggregates section](/build/continuous-aggregates/create-a-continuous-aggregate).
+
+## Write and save queries
+
+You write and run queries directly in the explorer, without leaving the page:
+
+- To open a new query tab, click `+`. Write your query, then click `Run` to see
+  the results below the editor.
+- Keep multiple query tabs open at the same time and switch between them as you work.
+- To reuse a query later, save it. Your saved queries appear in the `Saved queries`
+  pane, where you can organize them into folders.
+- Queries you write in the floating [{C.SQL_EDITOR}](/build/data-management/run-queries-from-tiger-console#sql-editor)
+  appear in the `scratchpad` tab when you open the explorer.
