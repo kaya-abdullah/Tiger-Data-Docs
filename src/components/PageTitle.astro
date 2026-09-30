@@ -1,16 +1,59 @@
 ---
 /**
- * Custom PageTitle with Figma-styled breadcrumbs.
+ * Custom PageTitle: Figma-styled breadcrumbs + Stainless AIDropdown (Copy Markdown,
+ * Open in Claude / ChatGPT / Gemini / Cursor). Matches upstream visibility rules.
  */
+import {
+  ENABLE_CONTEXT_MENU,
+  ENABLE_PROSE_MARKDOWN_RENDERING,
+  RENDER_PAGE_DESCRIPTIONS,
+} from "virtual:stl-docs-virtual-module";
+import type { StarlightRouteData } from "@astrojs/starlight/route-data";
 import Default from "@astrojs/starlight/components/PageTitle.astro";
+import { AIDropdown } from "@stainless-api/docs/components/AIDropdown";
 import Breadcrumbs from "./Breadcrumbs.astro";
 import PageLabels from "./PageLabels.astro";
 
+function sidebarHasEntry(
+  sidebarEntry: StarlightRouteData["sidebar"],
+  currentPath?: string
+) {
+  if (!currentPath) return false;
+  const normalizePath = (path: string) =>
+    path.endsWith("/") ? path : path + "/";
+  const normalizedCurrent = normalizePath(currentPath);
+  for (const entry of sidebarEntry) {
+    if (entry.type === "link") {
+      if (normalizePath(entry.href) === normalizedCurrent) return true;
+    } else if (entry.type === "group") {
+      if (sidebarHasEntry(entry.entries, currentPath)) return true;
+    }
+  }
+  return false;
+}
+
 const entryTemplate = Astro.locals.starlightRoute?.entry?.data?.template;
 const isSplashPage = entryTemplate === "splash";
-const skipRenderingStarlightTitle = isSplashPage;
+const skipRenderingStarlightTitle =
+  isSplashPage ||
+  (Astro.locals._stlStarlightPage?.skipRenderingStarlightTitle ?? false);
+const hasMarkdownRoute =
+  Astro.locals._stlStarlightPage?.hasMarkdownRoute ?? true;
 const currentPath = Astro.url.pathname;
+
+/** Same rules as @stainless-api/docs PageTitle (prose markdown + context menu flags). */
+function shouldShowAIDropdown() {
+  if (!sidebarHasEntry(Astro.locals.starlightRoute.sidebar, currentPath))
+    return false;
+  if (!hasMarkdownRoute) return false;
+  if (!ENABLE_PROSE_MARKDOWN_RENDERING) return false;
+  if (!ENABLE_CONTEXT_MENU) return false;
+  return true;
+}
+
+const showAIDropdown = shouldShowAIDropdown();
 const description = Astro.locals.starlightRoute.entry.data.description;
+const shouldRenderDescription = RENDER_PAGE_DESCRIPTIONS;
 ---
 
 {
@@ -24,10 +67,11 @@ const description = Astro.locals.starlightRoute.entry.data.description;
           currentPath={currentPath}
           sidebarEntry={Astro.locals.starlightRoute.sidebar}
         />
+        {showAIDropdown && <AIDropdown />}
       </div>
       <Default />
       <PageLabels />
-      {!!description && (
+      {!!description && shouldRenderDescription && (
         <p class="description">{description}</p>
       )}
     </>

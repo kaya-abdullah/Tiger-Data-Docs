@@ -1,13 +1,13 @@
 ---
 /**
- * Wraps Starlight Head and injects `<meta name="description">` / `og:description`
+ * Wraps Stainless/Starlight Head and injects `<meta name="description">` / `og:description`
  * from `seoDescription` when set. Use `seoDescription` for copy that should appear in search
  * and social previews but not in the sidebar (the sidebar uses `description` from frontmatter).
  *
  * If both `description` and `seoDescription` are set, Starlight keeps using `description` for
  * default meta/sidebar; we do not inject from `seoDescription` (description wins).
  */
-import DefaultHead from "@astrojs/starlight/components/Head.astro";
+import DefaultHead from "@stainless-api/docs/components/Head";
 import ImageZoom from "./ImageZoom.astro";
 import ExternalLinks from "./HeadScripts/ExternalLinks.astro";
 import TabDeepLink from "./HeadScripts/TabDeepLink.astro";

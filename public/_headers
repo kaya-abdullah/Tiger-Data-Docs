@@ -1,4 +1,4 @@
-# Cache headers for self-hosted deploys
+# Cache headers for self-hosted deploys (Stainless recommendation)
 # Used by Netlify and Cloudflare Pages. See also vercel.json for Vercel.
 #
 # _astro assets are versioned (content-hashed), so they can be cached long-term.

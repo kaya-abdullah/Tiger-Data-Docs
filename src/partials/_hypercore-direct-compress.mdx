@@ -1,5 +1,5 @@
 import * as C from "@constants";
-import { Callout } from "@components/docs-components";
+import { Callout } from "@stainless-api/docs/components";
 import SinceRelease from "@components/SinceRelease.astro";
 
 When direct compress is active, {C.TIMESCALE_DB} compresses data in memory during ingestion and writes the compressed batches directly to the {C.COLUMNSTORE}. This significantly reduces the I/O footprint, and `INSERT` and `COPY` produce {C.COLUMNSTORE} {C.CHUNK}s on the spot — the [{C.COLUMNSTORE} policy](/reference/timescaledb/hypercore/add_columnstore_policy) is less important.

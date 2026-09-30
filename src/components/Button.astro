@@ -20,29 +20,18 @@ export interface Props {
   type?: "button" | "submit" | "reset";
   /** Additional class names. */
   class?: string;
-  className?: string;
-  [key: string]: unknown;
 }
 
-const {
-  label,
-  href,
-  variant = "outline",
-  icon,
-  type = "button",
-  class: className,
-  className: alternateClassName,
-  ...attrs
-} = Astro.props;
+const { label, href, variant = "outline", icon, type = "button", class: className } = Astro.props;
 const showIcon = icon === "down" || icon === true;
 
 const baseClass = "stl-ui-button";
 const variantClass = variant === "outline" ? "stl-ui-button--outline" : "stl-ui-button--accent";
-const classes = [baseClass, variantClass, className, alternateClassName].filter(Boolean).join(" ");
+const classes = [baseClass, variantClass, className].filter(Boolean).join(" ");
 ---
 
 {href ? (
-  <a class={classes} href={href} {...attrs}>
+  <a class={classes} href={href}>
     {showIcon ? (
       <span class="stl-ui-button__icon" aria-hidden="true">
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" focusable="false">
@@ -54,7 +43,7 @@ const classes = [baseClass, variantClass, className, alternateClassName].filter(
     <span class="stl-ui-button__label">{label}</span>
   </a>
 ) : (
-  <button class={classes} type={type} {...attrs}>
+  <button class={classes} type={type}>
     {showIcon ? (
       <span class="stl-ui-button__icon" aria-hidden="true">
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" focusable="false">

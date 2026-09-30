@@ -6,7 +6,7 @@ keywords: [continuous aggregates, migrate]
 ---
 
 import * as C from "@constants";
-import { Callout } from "@components/docs-components";
+import { Callout } from "@stainless-api/docs/components";
 import CaggMigratePermissions from "../../../../partials/_caggs-migrate-permissions.mdx";
 
 Starting in {C.TIMESCALE_DB} v2.7, {C.CAGG}s use a newer format that performs better and supports more SQL. {C.CAGG_CAP}s created before that release, or created with `timescaledb.finalized` set to `false`, still use the legacy layout until you migrate.

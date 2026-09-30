@@ -1,6 +1,6 @@
 /**
  * Prev/next page resolution for custom PageNavigation.
- * Computes pagination from the Starlight sidebar so our custom component
+ * Mirrors @stainless-api/docs pagination util so our custom component
  * shows the same sidebar order and filtering (mobile-only items excluded, etc.).
  */
 import type { StarlightRouteData } from "@astrojs/starlight/route-data";

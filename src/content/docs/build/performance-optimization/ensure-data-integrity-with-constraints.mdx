@@ -5,7 +5,7 @@ products: [cloud, self_hosted]
 ---
 
 import * as C from "@constants";
-import { Callout } from "@components/docs-components";
+import { Callout } from "@stainless-api/docs/components";
 
 Constraints reject invalid rows at insert or update time. On {C.HYPERTABLE}s, {C.TIMESCALE_DB} mirrors those rules to underlying {C.CHUNK}s and keeps related indexes consistent when you add, change, or drop a constraint.
 

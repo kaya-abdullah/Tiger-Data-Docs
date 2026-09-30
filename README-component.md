@@ -15,7 +15,7 @@ This doc describes how to use the custom and overridden components in Tiger Data
 In any `.mdx` file under `src/content/docs/`, add this import at the top:
 
 ```mdx
-import { Callout } from "@components/docs-components";
+import { Callout } from "@stainless-api/docs/components";
 ```
 
 Then use one of these blocks. **Tip** and **Note** are the most common; use **Important** or **Warning** for cautions, and **Callout with button** when you need a CTA.
@@ -54,7 +54,7 @@ Callouts are implemented by the custom **Callout** component and are available i
 In your `.mdx` file:
 
 ```mdx
-import { Callout } from "@components/docs-components";
+import { Callout } from "@stainless-api/docs/components";
 ```
 
 ### Variants and props
@@ -165,7 +165,7 @@ The **Button** component implements two states: **enabled** (outline: light bg, 
 Import and use in MDX or Astro:
 
 ```mdx
-import { Button } from "@components/docs-components";
+import { Button } from "@stainless-api/docs/components";
 
 <Button label="Button enabled" icon="down" />
 <Button label="Download" href="/download" variant="outline" icon="down" />
@@ -196,7 +196,7 @@ These are **layout and chrome** components. You don’t use them directly in MDX
 |------------------|----------------------------------------------------------------------|-------------------------------------------------|
 | **PageNavigation** | Bottom-of-page “Previous” / “Next” links with labels and page titles | `starlightCompat.components.Pagination` → `src/components/PageNavigation.astro` |
 | **Breadcrumbs**  | Breadcrumb trail above the page title                                | Rendered inside `PageTitle`                     |
-| **PageTitle**    | Breadcrumbs, H1, labels, and description                            | Starlight `components.PageTitle` → `src/components/PageTitle.astro` |
+| **PageTitle**    | Breadcrumbs, Stainless **AIDropdown** (copy MD / AI apps), H1, labels, description | `starlightCompat.components.PageTitle` → `src/components/PageTitle.astro` |
 | **Header**       | Site header (logo, nav)                                              | `starlightCompat.components.Header` → `src/components/Header.astro` |
 
 - **Breadcrumbs:** Built from the sidebar; group labels (for example, “Toolkit”) link to the first page in that group. The current page is the last segment and is not a link.
@@ -332,9 +332,21 @@ import SecondaryButton from "@components/SecondaryButton.astro";
 
 Use the **icon** slot to replace the default Copy icon: put your SVG (or icon component) inside the component with `slot="icon"`.
 
-### CopyToClipboard (copy to clipboard)
+### AIDropdown (Copy Markdown + Open in Claude / ChatGPT / Gemini / Cursor)
 
-The **CopyToClipboard** component is a button that copies a given string to the clipboard on click and shows “Copied!” feedback. It matches the same visual style as SecondaryButton. Use it for connection strings, one-line code snippets, or any text you want users to copy with one click. For full code blocks, rely on Starlight’s Expressive Code copy button.
+**AIDropdown** is Stainless’s official split-button in the page title row (next to breadcrumbs). This site renders it from **`PageTitle.astro`** via:
+
+```ts
+import { AIDropdown } from "@stainless-api/docs/components/AIDropdown";
+```
+
+It appears only when the page is in the sidebar, has a markdown route (`hasMarkdownRoute`), and Stainless’s **`enableProseMarkdownRendering`** and **`contextMenu`** features are on (defaults keep the dropdown visible). Behavior and styling come from **`@stainless-api/docs`** + **`@stainless-api/ui-primitives`** (including **Gemini** in the menu where configured).
+
+To drop the control into another layout (uncommon), use the same import; options are driven by the docs plugin’s global scripts, not props.
+
+### CopyToClipboard (copy to clipboard) – Stainless-style
+
+The **CopyToClipboard** component is a button that copies a given string to the clipboard on click and shows “Copied!” feedback. It matches the same visual style as SecondaryButton so it fits the Stainless Docs Platform / Tiger Data design system. Use it for connection strings, one-line code snippets, or any text you want users to copy with one click. For full code blocks, rely on Starlight’s Expressive Code copy button.
 
 **Import (MDX; React component, use `client:load`):**
 
@@ -367,7 +379,7 @@ The **Button** component has two states: enabled and hover. Use it for standalon
 **Import (in MDX or Astro):**
 
 ```mdx
-import { Button } from "@components/docs-components";
+import { Button } from "@stainless-api/docs/components";
 ```
 
 **Props:** `label` (required), `href` (optional; renders as `<a>` if set), `variant` (`"outline"` | `"accent"`), `icon` (`"down"` or `true` for the arrow), `type`, `class`.
@@ -388,7 +400,7 @@ See **Main / primary button** above for when to use primary vs outline and how i
 - **IntegrateToc**: table of contents for the Integrate section.
 - **Changelog**: changelog entries, tags, filters. Used on changelog pages.
 
-Import them from `@components/...` in the relevant Astro or MDX files. See `src/components/` and `astro.config.ts` for exact paths and usage.
+Use them by importing from `@components/...` or `@stainless-api/docs/components` (for Button/Callout) in the relevant Astro/MDX files. See `src/components/` and `astro.config.ts` for exact paths and usage.
 
 </details>
 
@@ -404,4 +416,4 @@ Import them from `@components/...` in the relevant Astro or MDX files. See `src/
 | Warning    | `<Callout variant="warning">…</Callout>`                            |
 | CTA        | `<Callout variant="callout" buttonLabel="…" buttonHref="…">…</Callout>` |
 
-Import once per file: `import { Callout } from "@components/docs-components";`
+Import once per file: `import { Callout } from "@stainless-api/docs/components";`

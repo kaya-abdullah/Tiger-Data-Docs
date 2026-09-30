@@ -39,16 +39,16 @@ Record:
 - **Product slug** — kebab-case. Used in file path, logo filename, `RelatedContentCard href`.
 - **Vendor URL** — for the one-liner.
 
-Pre-fill exactly one sentence at the top of the body: a vendor-linked one-liner about what the product is. Example: *"[Apache Kafka](https://kafka.apache.org/) is a distributed event streaming platform used for high-performance data pipelines, streaming analytics, and data integration."* Stop there. The "This page shows you how to..." sentence is procedural content — handle it per mode below.
+Pre-fill exactly one sentence at the top of the body: a vendor-linked one-liner about what the product is. Example: _"[Apache Kafka](https://kafka.apache.org/) is a distributed event streaming platform used for high-performance data pipelines, streaming analytics, and data integration."_ Stop there. The "This page shows you how to..." sentence is procedural content — handle it per mode below.
 
 ## Modes of operation
 
 Ask via `AskUserQuestion` which mode applies:
 
-| Mode | Choose when |
-|---|---|
-| Scaffold | The user knows the integration steps and wants the template pre-processed — frontmatter resolved, structure laid down, placeholders to fill in. |
-| Full draft | The agent writes the body content from a source URL (vendor docs, GitHub example, blog post) or general product knowledge. |
+| Mode       | Choose when                                                                                                                                     |
+| ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| Scaffold   | The user knows the integration steps and wants the template pre-processed — frontmatter resolved, structure laid down, placeholders to fill in. |
+| Full draft | The agent writes the body content from a source URL (vendor docs, GitHub example, blog post) or general product knowledge.                      |
 
 The deployment-scope question, cloud-platform follow-up, logo question, sidebar entry, and `pnpm build` pass run in **both** modes.
 
@@ -58,7 +58,7 @@ Resolve from up-front answers: frontmatter (title, description, `integrationPlat
 
 For everything procedural — part headings, `NumberedItem` titles, body lines, code blocks, verify steps — **copy `_template-integration.mdx` verbatim**, preserving every parenthesized placeholder for the user to fill in. Don't invent part headings ("Configure your database" is a guess unless the user said so), and don't write SQL, CLI commands, or connection examples.
 
-If you find yourself typing a real heading like *"Create a hypertable"* or a real `CREATE TABLE`, you've drifted into full-draft mode — stop.
+If you find yourself typing a real heading like _"Create a hypertable"_ or a real `CREATE TABLE`, you've drifted into full-draft mode — stop.
 
 ### Full-draft mode
 
@@ -73,13 +73,13 @@ Warnings about uncertainty go in your reply to the user, not into the published 
 
 Ask via `AskUserQuestion` which Tiger Data deployment(s) this integration supports. The answer drives frontmatter, prereq partial, title, prose constants, and whether to use `<Tabs>`.
 
-| Scope | `integrationPlatforms` | Prereq partial | Title pattern | Constants in prose | `<Tabs>`? |
-|---|---|---|---|---|---|
-| Tiger Cloud only | cloud platforms (follow-up) | `_prereqs-cloud-no-connection.mdx` | Integrate `<Product>` with Tiger Cloud | `{C.SERVICE_LONG}`, `{C.CLOUD_LONG}` | No |
-| Self-hosted only | `[self-hosted]` | `_prereqs-self-instance.mdx` | Integrate `<Product>` with TimescaleDB | `{C.SELF_LONG}`, `{C.TIMESCALE_DB}` | No |
-| Cloud-primary, self-hosted parity assumed | cloud platforms + `self-hosted` | `_prereqs-cloud-and-self.mdx` | Integrate `<Product>` with Tiger Cloud | Lead with `{C.SERVICE_LONG}`; partial adds parity note | No |
-| Both equally supported, identical steps | cloud platforms + `self-hosted` | `_prereqs-cloud-or-self.mdx` | Integrate `<Product>` with Tiger Data | "your service or database" | No |
-| Both equally supported, diverging steps | cloud platforms + `self-hosted` | `_prereqs-cloud-or-self.mdx` | Integrate `<Product>` with Tiger Data | Per-tab: `{C.CLOUD_LONG}` / `{C.SELF_LONG}` | Yes; labels `Tiger Cloud` / `Self-hosted TimescaleDB` |
+| Scope                                     | `integrationPlatforms`          | Prereq partial                     | Title pattern                          | Constants in prose                                     | `<Tabs>`?                                             |
+| ----------------------------------------- | ------------------------------- | ---------------------------------- | -------------------------------------- | ------------------------------------------------------ | ----------------------------------------------------- |
+| Tiger Cloud only                          | cloud platforms (follow-up)     | `_prereqs-cloud-no-connection.mdx` | Integrate `<Product>` with Tiger Cloud | `{C.SERVICE_LONG}`, `{C.CLOUD_LONG}`                   | No                                                    |
+| Self-hosted only                          | `[self-hosted]`                 | `_prereqs-self-instance.mdx`       | Integrate `<Product>` with TimescaleDB | `{C.SELF_LONG}`, `{C.TIMESCALE_DB}`                    | No                                                    |
+| Cloud-primary, self-hosted parity assumed | cloud platforms + `self-hosted` | `_prereqs-cloud-and-self.mdx`      | Integrate `<Product>` with Tiger Cloud | Lead with `{C.SERVICE_LONG}`; partial adds parity note | No                                                    |
+| Both equally supported, identical steps   | cloud platforms + `self-hosted` | `_prereqs-cloud-or-self.mdx`       | Integrate `<Product>` with Tiger Data  | "your service or database"                             | No                                                    |
+| Both equally supported, diverging steps   | cloud platforms + `self-hosted` | `_prereqs-cloud-or-self.mdx`       | Integrate `<Product>` with Tiger Data  | Per-tab: `{C.CLOUD_LONG}` / `{C.SELF_LONG}`            | Yes; labels `Tiger Cloud` / `Self-hosted TimescaleDB` |
 
 If the scope is "Both equally supported", follow up with `AskUserQuestion` to distinguish **identical steps** (single body, no `<Tabs>`) from **diverging steps** (page-level `<Tabs>`, see [Bilateral parts](#bilateral-parts)).
 
@@ -89,17 +89,17 @@ If the scope includes Tiger Cloud, follow up to pin cloud platforms: AWS only �
 
 `src/content/docs/integrate/<category>/<slug>.mdx`. `<category>` is one of:
 
-| Folder | For products that... |
-|---|---|
-| `bi-vizualization` | Visualize data or build dashboards (Tableau, Power BI) |
-| `code` | Help developers write app code against the database |
-| `configuration-deployment` | Provision, deploy, or manage infrastructure |
-| `connectors` | Are Tiger Data native source/destination connectors |
-| `data-engineering-etl` | Move, transform, or orchestrate data (Kafka, Airflow, Debezium) |
-| `data-ingestion-streaming` | Ingest or stream data into the database (Fivetran, HiveMQ) |
-| `observability-alerting` | Monitor, alert on, or scrape metrics/logs (Grafana, Prometheus, Datadog) |
-| `query-administration` | Manage queries, schemas, or admin tasks |
-| `secure-connectivity` | Add network or auth security on top of connections |
+| Folder                     | For products that...                                                     |
+| -------------------------- | ------------------------------------------------------------------------ |
+| `bi-vizualization`         | Visualize data or build dashboards (Tableau, Power BI)                   |
+| `code`                     | Help developers write app code against the database                      |
+| `configuration-deployment` | Provision, deploy, or manage infrastructure                              |
+| `connectors`               | Are Tiger Data native source/destination connectors                      |
+| `data-engineering-etl`     | Move, transform, or orchestrate data (Kafka, Airflow, Debezium)          |
+| `data-ingestion-streaming` | Ingest or stream data into the database (Fivetran, HiveMQ)               |
+| `observability-alerting`   | Monitor, alert on, or scrape metrics/logs (Grafana, Prometheus, Datadog) |
+| `query-administration`     | Manage queries, schemas, or admin tasks                                  |
+| `secure-connectivity`      | Add network or auth security on top of connections                       |
 
 If no category fits, ask before inventing a new folder.
 
@@ -139,29 +139,32 @@ import IntegrationPrereqs from "@partials/<path-to-prereq-partial>.mdx";
 
 Pick the prereq partial based on deployment scope:
 
-| Partial | Use when |
-|---|---|
-| `_prereqs-cloud-and-self.mdx` | Same steps work on Tiger Cloud and self-hosted |
-| `_prereqs-cloud-or-self.mdx` | Reader picks Tiger Cloud OR self-hosted (two equal paths) |
-| `_prereqs-self-instance.mdx` | Self-hosted only |
-| `_prereqs-cloud-no-connection.mdx` | Console-only workflow inside Tiger Cloud |
+| Partial                            | Use when                                                  |
+| ---------------------------------- | --------------------------------------------------------- |
+| `_prereqs-cloud-and-self.mdx`      | Same steps work on Tiger Cloud and self-hosted            |
+| `_prereqs-cloud-or-self.mdx`       | Reader picks Tiger Cloud OR self-hosted (two equal paths) |
+| `_prereqs-self-instance.mdx`       | Self-hosted only                                          |
+| `_prereqs-cloud-no-connection.mdx` | Console-only workflow inside Tiger Cloud                  |
 
 Also import `<ConnectionDetails />` when the procedure asks the reader to plug `host`/`port`/`dbname`/`user`/`password` into the third-party tool. The decision is about what the steps below require, not which prereq partial you picked.
 
 Only import below what you actually use — the build flags unused imports:
 
 ```tsx
-import { Callout } from "@stainless-api/docs/components";                                  // scope callouts, warnings
-import { RelatedContentCards, RelatedContentCard } from "@components/RelatedContentCards"; // Next steps section
-import ConnectionDetails from "@partials/_prereqs-connection-details.mdx";                 // inside Prerequisites
-import { Image } from "astro:assets";                                                      // optimized images
-import { Tabs, TabItem } from "@astrojs/starlight/components";                             // parallel paths (Cloud vs self-hosted)
+import { Callout } from "@components/docs-components"; // scope callouts, warnings
+import {
+  RelatedContentCards,
+  RelatedContentCard,
+} from "@components/RelatedContentCards"; // Next steps section
+import ConnectionDetails from "@partials/_prereqs-connection-details.mdx"; // inside Prerequisites
+import { Image } from "astro:assets"; // optimized images
+import { Tabs, TabItem } from "@astrojs/starlight/components"; // parallel paths (Cloud vs self-hosted)
 ```
 
 ## Page layout (top → bottom)
 
 1. **Intro paragraph** — what the product does, plus one sentence on what this page shows.
-2. **Optional scope `Callout`** (`variant="note"`) — only when the product has multiple integration paths and this page covers one of them. Example: *"This page covers the self-managed Apache Kafka path. If your Kafka cluster runs on Confluent Cloud, use the fully managed connector in {C.CONSOLE} instead."*
+2. **Optional scope `Callout`** (`variant="note"`) — only when the product has multiple integration paths and this page covers one of them. Example: _"This page covers the self-managed Apache Kafka path. If your Kafka cluster runs on Confluent Cloud, use the fully managed connector in {C.CONSOLE} instead."_
 3. **"In this integration guide, you:" bullets** — short verb-led outcomes.
 4. **`<Prerequisites context="integration">`** — `<IntegrationPrereqs />`, then `<ConnectionDetails />` if applicable, then product-specific bullets (account, install, version). Always link installation pages.
 5. **One or more parts** — see [Bilateral parts](#bilateral-parts).
@@ -185,7 +188,7 @@ If the integration has a discrete data-movement step (send a test message, run a
 
 Inside each part:
 
-```mdx
+````mdx
 <NumberedList>
   <NumberedItem title="Verb-phrase title for the sub-step">
 
@@ -199,7 +202,7 @@ Inside each part:
 
   </NumberedItem>
 </NumberedList>
-```
+````
 
 If a sub-step has its own numbered sequence, write every item as `1.` inside the `NumberedItem` body — the renderer styles them as `a.`, `b.`, `c.` at the nested level. Don't nest a second `NumberedList`.
 
@@ -262,11 +265,11 @@ Full mapping table, carve-outs (`compress_chunk_time_interval` and `compress_spa
 
 Ask via `AskUserQuestion` whether the user has a logo:
 
-| Option | What to do |
-|---|---|
-| Light + dark variants | Save both to `src/assets/images/integrate/card-logos/` as `<product-slug>.png` and `<product-slug>-dark.png`. Set both `integrationCardLogo` and `integrationCardLogoDark` in frontmatter. |
-| Light only | Save `<product-slug>.png`. Set `integrationCardLogo` in frontmatter; omit `integrationCardLogoDark`. |
-| No file yet | Omit `integrationCardLogo` entirely — the overview card falls back to initials in a colored badge. Optionally set `integrationCardInitials` to override the default initials (for example, `λ` for AWS Lambda). |
+| Option                | What to do                                                                                                                                                                                                      |
+| --------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Light + dark variants | Save both to `src/assets/images/integrate/card-logos/` as `<product-slug>.png` and `<product-slug>-dark.png`. Set both `integrationCardLogo` and `integrationCardLogoDark` in frontmatter.                      |
+| Light only            | Save `<product-slug>.png`. Set `integrationCardLogo` in frontmatter; omit `integrationCardLogoDark`.                                                                                                            |
+| No file yet           | Omit `integrationCardLogo` entirely — the overview card falls back to initials in a colored badge. Optionally set `integrationCardInitials` to override the default initials (for example, `λ` for AWS Lambda). |
 
 ### Screenshots and illustrations
 
@@ -276,21 +279,21 @@ Save to `src/assets/images/integrate/<category>/<descriptive-name>.png`. Import 
 import { Image } from "astro:assets";
 import imgFoo from "../../../../assets/images/integrate/<category>/<file>.png";
 
-<Image src={imgFoo} alt="Descriptive alt text" />
+<Image src={imgFoo} alt="Descriptive alt text" />;
 ```
 
 See `src/assets/images/README.md` for the project's image conventions, including the integration-screenshot layout and light/dark-mode versions.
 
 ## Components reference
 
-| Component | Source / docs |
-|---|---|
-| `Callout` | `src/components/Callout.astro` — variants are exactly `tip`, `note`, `important`, `warning`, `callout` (CTA with button). No `info`/`success`/`danger`/`caution` — any other value is an authoring error. |
-| `NumberedList` / `NumberedItem` | `src/components/NumberedList.tsx` — `NumberedItem` accepts `title: string` |
-| `Prerequisites` | `src/components/Prerequisites.tsx` — pass `context="integration"` |
-| `RelatedContentCards` / `RelatedContentCard` | `src/components/RelatedContentCard.tsx`; per-page right-rail guide in `src/components/LearnMore.README.md` |
-| `Tabs` / `TabItem` | `@astrojs/starlight/components` (NOT Stainless) — https://starlight.astro.build/components/tabs/ |
-| `Image` | `astro:assets` — https://docs.astro.build/en/guides/images/ |
+| Component                                    | Source / docs                                                                                                                                                                                             |
+| -------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Callout`                                    | `src/components/Callout.astro` — variants are exactly `tip`, `note`, `important`, `warning`, `callout` (CTA with button). No `info`/`success`/`danger`/`caution` — any other value is an authoring error. |
+| `NumberedList` / `NumberedItem`              | `src/components/NumberedList.tsx` — `NumberedItem` accepts `title: string`                                                                                                                                |
+| `Prerequisites`                              | `src/components/Prerequisites.tsx` — pass `context="integration"`                                                                                                                                         |
+| `RelatedContentCards` / `RelatedContentCard` | `src/components/RelatedContentCard.tsx`; per-page right-rail guide in `src/components/LearnMore.README.md`                                                                                                |
+| `Tabs` / `TabItem`                           | `@astrojs/starlight/components` (NOT Stainless) — https://starlight.astro.build/components/tabs/                                                                                                          |
+| `Image`                                      | `astro:assets` — https://docs.astro.build/en/guides/images/                                                                                                                                               |
 
 ## After writing the page
 

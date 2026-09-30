@@ -6,7 +6,7 @@ keywords: [backups, restore, recovery]
 ---
 
 import * as C from "@constants";
-import { Callout } from "@components/docs-components";
+import { Callout } from "@stainless-api/docs/components";
 
 {C.TIMESCALE_DB} takes advantage of the reliable backup and restore functionality
 provided by {C.PG}. There are a few different mechanisms you can use to
@@ -14,3 +14,4 @@ back up your {C.SELF_LONG} database:
 
 *   [Logical backup](/deploy/self-hosted/backup-and-restore/logical-backup) with `pg_dump` and `pg_restore`.
 *   [Physical backup](/deploy/self-hosted/backup-and-restore/physical) with `pg_basebackup` or another tool.
+

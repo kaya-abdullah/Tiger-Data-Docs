@@ -127,7 +127,7 @@ tr:hover td {
   color: var(--stl-color-accent);
 }
 
-/* The previous prose wrapper added `margin-block-start: 8px`
+/* Stainless's prose `@scope` (@stainless-api/docs-ui) adds `margin-block-start: 8px`
    to every `li + li`. Tab triggers live in a `<ul role="tablist">` and are not prose,
    so the rule pushes every tab except the first one down 8px. Reset it so all
    triggers share the same baseline. */
