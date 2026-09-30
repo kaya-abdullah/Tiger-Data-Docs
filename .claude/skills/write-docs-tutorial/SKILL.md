@@ -36,12 +36,9 @@ keywords: [tutorials, <topic>, <level>, <technologies>, ...]
 
 ```tsx
 import * as C from "@constants";
-import { Callout } from "@components/docs-components";
+import { Callout } from "@stainless-api/docs/components";
 import { NumberedList, NumberedItem } from "@components/NumberedList";
-import {
-  RelatedContentCards,
-  RelatedContentCard,
-} from "@components/RelatedContentCards";
+import { RelatedContentCards, RelatedContentCard } from "@components/RelatedContentCards";
 import { Prerequisites } from "@components/Prerequisites";
 ```
 
@@ -50,13 +47,12 @@ import { Prerequisites } from "@components/Prerequisites";
 1. **Opening hook** — A conversational sentence or two that frames why the reader cares. Add personality without being cheesy. Then a brief explanation of what the tutorial covers.
 
 2. **GitHub repo callout** (if applicable) — Immediately after the opening, link to the source repo:
-
    ```mdx
    <Callout variant="tip">
-     The complete source code for this tutorial is available in the [repo-name
-     on GitHub](https://github.com/...). You can clone the repository to get
-     started quickly, or follow this tutorial step by step to build everything
-     from scratch.
+     The complete source code for this tutorial is available in the
+     [repo-name on GitHub](https://github.com/...).
+     You can clone the repository to get started quickly, or follow this tutorial step by
+     step to build everything from scratch.
    </Callout>
    ```
 
@@ -65,13 +61,11 @@ import { Prerequisites } from "@components/Prerequisites";
 4. **"By the end" list** — Learning objectives as bullet points.
 
 5. **Prerequisites component**:
-
    ```mdx
    <Prerequisites>
-     - A [Tiger Cloud service](/get-started/quickstart/create-service) running
-     PostgreSQL 17+, or a [self-hosted
-     instance](/get-started/choose-your-path/install-timescaledb) - Other
-     requirements with install links
+   - A [Tiger Cloud service](/get-started/quickstart/create-service) running PostgreSQL 17+,
+     or a [self-hosted instance](/get-started/choose-your-path/install-timescaledb)
+   - Other requirements with install links
    </Prerequisites>
    ```
 
@@ -116,7 +110,6 @@ What the user should see or verify after this step.
 ### Code snippets — ALWAYS add context
 
 Every code block MUST have surrounding text that tells the reader:
-
 - **Where to run it**: "Run the following SQL in your SQL client", "In your terminal, run...", "In the same SQL session..."
 - **What it does**: Brief explanation of what the code accomplishes
 - **What to expect**: Expected output or what to verify after running
@@ -132,7 +125,6 @@ Never drop a bare code block without context.
 ### Collapsible sections
 
 Use `<details>`/`<summary>` for:
-
 - Multiple setup options (e.g., Tiger Cloud vs Docker vs manual install)
 - Alternative paths (clone repo vs build from scratch)
 - Verbose content that not every reader needs
@@ -173,7 +165,6 @@ Full mapping table, carve-outs (`compress_chunk_time_interval` and `compress_spa
 ## .env file handling
 
 When a tutorial involves environment variables:
-
 1. Explain that the user should **create** (or **duplicate from .env.example**) a `.env` file
 2. Include a **warning callout** about adding `.env` to `.gitignore`
 3. Explain **what each variable is for** (not just what to set)
@@ -182,7 +173,6 @@ When a tutorial involves environment variables:
 ## Cross-linking
 
 Link to existing docs wherever relevant:
-
 - `/learn/search/using-pg-textsearch` — BM25 concepts
 - `/learn/search/pgvector-pgvectorsearch` — vector search concepts, including pgvectorscale and StreamingDiskANN
 - `/get-started/quickstart/create-service` — creating a service
@@ -204,19 +194,13 @@ Use `Grep` to find existing pages about the tutorial's technologies before writi
 You MUST also:
 
 1. **Add a sidebar entry** in `astro.config.ts` under the "Tutorials" section (~line 514):
-
    ```ts
    { label: "<Tutorial title>", link: "/learn/tutorials/<slug>" },
    ```
 
 2. **Add a card** to `src/content/docs/learn/tutorials/index.mdx`:
-
    ```mdx
-   <RelatedContentCard
-     title="<Title>"
-     description={`<Description using ${C.CONSTANT} if needed>`}
-     href="/learn/tutorials/<slug>"
-   />
+   <RelatedContentCard title="<Title>" description={`<Description using ${C.CONSTANT} if needed>`} href="/learn/tutorials/<slug>" />
    ```
 
 3. **Add glossary entries** for any new terms introduced. Edit `src/lib/glossary-data.ts` and insert alphabetically. Use the appropriate category from: TimescaleDB, Storage, Time-series, Cloud, Security, Operations, Observability, AI & vectors, PostgreSQL, Data & migration.

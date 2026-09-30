@@ -3,7 +3,7 @@ import { parse } from "yaml";
 
 const source =
   "https://raw.githubusercontent.com/stainless-sdks/tiger-cloud-openapi/main/openapi.yml";
-const destination = new URL("../openapi/tiger-cloud.yml", import.meta.url);
+const destination = new URL("../stainless/openapi.yml", import.meta.url);
 
 const response = await fetch(source);
 if (!response.ok) {
@@ -30,6 +30,6 @@ if (previous === contents) {
 } else {
   await writeFile(destination, contents, "utf8");
   console.log(
-    "Updated openapi/tiger-cloud.yml. Review the diff, then run pnpm build.",
+    "Updated stainless/openapi.yml. Review the diff, then run pnpm build.",
   );
 }
