@@ -6,8 +6,8 @@
  * - Default: text/icon #15151E; Hover: text/icon #4F6BED (Primary 900)
  * - 13px uppercase labels; rule + gap + prev/next row
  *
- * Replaces the default Stainless Pagination when registered in starlightCompat.components.
- * Uses the same getPrevNextPage logic as Stainless so sidebar order and filtering match.
+ * Replaces Starlight's default Pagination component.
+ * Uses the local getPrevNextPage helper so sidebar order and filtering match.
  */
 import config from "virtual:starlight/user-config";
 import { getPrevNextPage } from "../lib/pagination";

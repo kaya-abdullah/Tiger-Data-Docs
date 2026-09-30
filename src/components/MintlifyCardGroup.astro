@@ -1,0 +1,10 @@
+<div class="docs-card-group"><slot /></div>
+
+<style>
+  .docs-card-group {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+    gap: 1rem;
+  }
+  .docs-card-group > :global(*) { margin-top: 0 !important; }
+</style>

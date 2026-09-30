@@ -5,7 +5,7 @@ products: [cloud, self_hosted]
 ---
 
 import * as C from "@constants";
-import { Callout } from "@stainless-api/docs/components";
+import { Callout } from "@components/docs-components";
 import { NumberedList, NumberedItem } from "@components/NumberedList";
 
 In {C.COMPANY} products, **{C.CHUNK}s** are the physical partitions behind a {C.HYPERTABLE}: each one holds rows for a time range (and optional space keys). You always query the {C.HYPERTABLE} name; the engine routes work to the right {C.CHUNK}s. {C.CHUNK_CAP}s are what make [{C.HYPERTABLE}s](/learn/hypertables/understand-hypertables) fast and manageable. You rarely interact with {C.CHUNK}s directly, but understanding them helps you design schemas, tune performance, and reason about how {C.CLOUD_LONG} (and {C.SELF_LONG}) organize your data.

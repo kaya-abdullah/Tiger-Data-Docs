@@ -1,6 +1,6 @@
 /**
  * Breadcrumb trail with group-level links.
- * Same logic as @stainless-api/docs ContentBreadcrumbs findBreadcrumbTrail,
+ * Finds the breadcrumb trail for the active Starlight sidebar entry,
  * but group entries get href = first link in that group so every segment can link (e.g. "hypertables" → /reference/timescaledb/hypertables/).
  */
 import type { StarlightRouteData } from "@astrojs/starlight/route-data";

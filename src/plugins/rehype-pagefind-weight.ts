@@ -6,9 +6,7 @@
  * cross-cutting search queries.
  *
  * Mirrors the priority scheme the old Gatsby docs site applied via Algolia
- * `customRanking: asc(weight)`, translated to Pagefind. Algolia indexing
- * happens inside the Stainless package and is unaffected — see
- * `node_modules/@stainless-api/docs/plugin/buildAlgoliaIndex.ts`.
+ * `customRanking: asc(weight)`, translated to Pagefind.
  *
  * Applies to pages under `src/content/docs/` only. Partials inherit the parent
  * page's weight via DOM nesting (the partial's compiled HTML ends up inside

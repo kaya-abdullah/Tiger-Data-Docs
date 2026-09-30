@@ -5,7 +5,7 @@ products: [cloud, self_hosted]
 ---
 
 import * as C from "@constants";
-import { Callout } from "@stainless-api/docs/components";
+import { Callout } from "@components/docs-components";
 import DoWithAi from "@components/DoWithAi.astro";
 
 Row deletes use the standard [`DELETE`](https://www.postgresql.org/docs/current/sql-delete.html) statement against a {C.HYPERTABLE}. This works the same whether the {C.CHUNK} is in the {C.ROWSTORE} or the {C.COLUMNSTORE}. You don't

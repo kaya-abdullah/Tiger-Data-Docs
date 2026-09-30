@@ -1,9 +1,10 @@
-import { createRequire } from "node:module";
 import { readdir, readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { defineConfig } from "astro/config";
 import type { AstroIntegration } from "astro";
-import { generateAPIReferenceItems, stainlessDocs } from "@stainless-api/docs";
+import starlight from "@astrojs/starlight";
+import type { StarlightUserConfig } from "@astrojs/starlight/types";
+import react from "@astrojs/react";
 import starlightLlmsTxt from "starlight-llms-txt";
 import sitemap from "@astrojs/sitemap";
 import rehypeBasePath from "./src/plugins/rehype-base-path";
@@ -13,10 +14,66 @@ import { createSitemapSerializer } from "./src/lib/sitemap-lastmod";
 
 import sentry from "@sentry/astro";
 
-const require = createRequire(import.meta.url);
+type DocsTab = {
+  label: string;
+  link: string;
+  hidden?: boolean;
+  sidebar: unknown[];
+};
 
-// Resolve package subpaths so aliasing the main "components" entry doesn't break ThemeSelect/SDKSelect.
-const docsComponentsScriptsPath = require.resolve("@stainless-api/docs/components/scripts");
+type LocalDocsConfig = Omit<StarlightUserConfig, "components" | "plugins" | "routeMiddleware" | "sidebar"> & {
+  header?: { links?: Array<{ label: string; link: string; variant?: string; attrs?: Record<string, string> }> };
+  experimental?: {
+    starlightCompat?: {
+      components?: Record<string, string>;
+      plugins?: StarlightUserConfig["plugins"];
+      routeMiddleware?: string[];
+    };
+  };
+  tabs: DocsTab[];
+};
+
+let localDocsVirtualConfig = {
+  tabs: [] as DocsTab[],
+  headerLinks: [] as NonNullable<LocalDocsConfig["header"]>["links"],
+};
+
+function localDocs(config: LocalDocsConfig): AstroIntegration {
+  const { header, experimental, tabs, ...starlightConfig } = config;
+  const compat = experimental?.starlightCompat;
+  localDocsVirtualConfig = { tabs, headerLinks: header?.links ?? [] };
+
+  return starlight({
+    ...starlightConfig,
+    components: Object.fromEntries(
+      Object.entries(compat?.components ?? {}).filter(([name]) => name !== "Callout")
+    ),
+    plugins: compat?.plugins,
+    routeMiddleware: compat?.routeMiddleware,
+    sidebar: tabs.map((tab) => ({
+      label: `__DOCS_TAB__${tab.link}__${tab.label}`,
+      collapsed: false,
+      items: tab.sidebar as NonNullable<StarlightUserConfig["sidebar"]>,
+    })),
+  });
+}
+
+function localDocsVirtualModulePlugin() {
+  const id = "\0virtual:stl-docs-virtual-module";
+  return {
+    name: "local-docs-virtual-module",
+    resolveId(source: string) {
+      return source === "virtual:stl-docs-virtual-module" ? id : undefined;
+    },
+    load(source: string) {
+      if (source !== id) return undefined;
+      return [
+        `export const TABS = ${JSON.stringify(localDocsVirtualConfig.tabs)};`,
+        `export const HEADER_LINKS = ${JSON.stringify(localDocsVirtualConfig.headerLinks)};`,
+      ].join("\n");
+    },
+  };
+}
 
 /**
  * Vite 7 compat:
@@ -171,15 +228,6 @@ async function collectHtmlFiles(dir: string): Promise<string[]> {
 // Base path from env var (e.g. BASE_PATH="/docs"). Falls back to "/" (no subpath).
 const BASE = process.env.BASE_PATH || "/";
 
-/**
- * Set `DOCS_LOCAL_WITHOUT_STAINLESS=1` to run `pnpm dev` / `pnpm build` without a
- * Stainless API key or `stl auth login`. Tiger Cloud REST API pages are omitted;
- * use a stub page and redirects instead (see README).
- */
-const DOCS_LOCAL_WITHOUT_STAINLESS =
-  process.env.DOCS_LOCAL_WITHOUT_STAINLESS === "1" ||
-  process.env.DOCS_LOCAL_WITHOUT_STAINLESS === "true";
-
 /** Astro doesn't auto-prepend `base` to redirect destinations. This helper does. */
 function withBase(redirects: Record<string, string>): Record<string, string> {
   if (BASE === "/") return redirects;
@@ -205,37 +253,15 @@ export default defineConfig({
     rehypePlugins: [[rehypeBasePath, { base: BASE }], rehypePagefindWeight],
   },
     vite: {
-      plugins: [vite7CompatPlugin()] as any,
+      plugins: [vite7CompatPlugin(), localDocsVirtualModulePlugin()] as any,
       resolve: {
         alias: [
           { find: "@components", replacement: new URL("./src/components", import.meta.url).pathname },
           { find: "@constants", replacement: new URL("./src/constants.ts", import.meta.url).pathname },
-          // Resolve scripts subpath to the package so ThemeSelect.astro / SDKSelect.astro keep working.
-          {
-            find: "@stainless-api/docs/components/scripts",
-            replacement: docsComponentsScriptsPath,
-          },
-          // Override Callout with our Figma-styled Tip (lightbulb icon). Exact match only.
-          {
-            find: /^@stainless-api\/docs\/components$/,
-            replacement: new URL("./src/lib/docs-components.ts", import.meta.url).pathname,
-          },
         ],
       },
     },
-    integrations: [basePathPostProcessor(BASE), stainlessDocs({
-      apiReference: DOCS_LOCAL_WITHOUT_STAINLESS
-        ? undefined
-        : {
-            stainlessProject: "tiger-cloud",
-            basePath: "/reference/tiger-cloud-rest",
-            // Workaround to hide default TypeScript reference in the API reference page. It's showing the TypeScript lib even without have a Typescript SDK published.
-            excludeLanguages: ["typescript"],
-            propertySettings: {
-              collapseDescription: false,
-              expandDepth: 2,
-            },
-          },
+    integrations: [react(), basePathPostProcessor(BASE), localDocs({
       title: "Tiger Data Docs",
       logo: {
         light: "./src/assets/logo-light.svg",
@@ -320,7 +346,6 @@ export default defineConfig({
       //   { icon: "github", label: "GitHub", href: "https://github.com/timescale/timescaledb" },
       // ],
       experimental: {
-        ...(DOCS_LOCAL_WITHOUT_STAINLESS ? { disableStainlessProseIndexing: true } : {}),
         starlightCompat: {
           components: {
             Head: "./src/components/Head.astro",
@@ -338,9 +363,7 @@ export default defineConfig({
               starlightLlmsTxt(),
               ...(starlightLinksValidator
                 ? [starlightLinksValidator({
-                    // The Tiger Cloud REST API reference is auto-generated by the
-                    // Stainless docs integration and only exists when STAINLESS_API_KEY
-                    // is set. Exclude its paths so lint:links passes without the key.
+                    // The generated REST endpoint pages are not part of this repository.
                     exclude: ["/reference/tiger-cloud-rest/**", "/files/**"],
                   })]
                 : []),
@@ -1938,24 +1961,16 @@ export default defineConfig({
                 { label: "Overview", link: "/reference/tiger-cloud" },
                 { label: "Tiger CLI", link: "/reference/tiger-cloud/tiger-cli" },
                 { label: "Tiger MCP", link: "/reference/tiger-cloud/tiger-mcp" },
-                DOCS_LOCAL_WITHOUT_STAINLESS
-                  ? {
-                      label: "Tiger Cloud REST API",
-                      collapsed: true,
-                      items: [
-                        {
-                          label: "Local preview (generated API disabled)",
-                          link: "/reference/tiger-cloud-rest-local-preview",
-                        },
-                      ],
-                    }
-                  : {
-                      label: "Tiger Cloud REST API",
-                      collapsed: true,
-                      items: generateAPIReferenceItems({
-                        excludeResourceOverviewPages: true,
-                      }),
+                {
+                  label: "Tiger Cloud REST API",
+                  collapsed: true,
+                  items: [
+                    {
+                      label: "REST API reference",
+                      link: "/reference/tiger-cloud-rest-local-preview",
                     },
+                  ],
+                },
                 {
                   label: "Data tiering",
                   collapsed: true,
@@ -1979,7 +1994,7 @@ export default defineConfig({
       priority: 0.7,
       // Filter out dynamic/reference pages that may not have source files
       filter: (page: string) => {
-        // Exclude reference API pages (auto-generated by Stainless)
+        // Exclude generated reference API paths.
         if (page.includes("/reference/tiger-cloud-rest/")) {
           return false;
         }
@@ -1991,21 +2006,9 @@ export default defineConfig({
         })]
       : [])],
 
-    // WARNING: this `redirects` map does NOT take effect in the deployed production site.
-    // The @stainless-api/docs integration unconditionally sets `build.redirects = false`
-    // during `astro build` (see its astro:config:setup hook), which disables Astro's static
-    // HTML redirect-page output. It writes the normalized map to dist/_stainless/redirects.json
-    // instead, expecting the host to consume it — but nothing in this repo does, so every entry
-    // here was silently a no-op in production. All page-move redirects now live in vercel.json
-    // (the "new site / internal moves" block) instead. This block only still matters for
-    // `pnpm dev` / `pnpm dev:local`, where Astro's dev server handles redirects natively and
-    // Stainless's override doesn't apply (it only fires for the `build` command).
+    // Production redirects live in vercel.json. These entries also support local development.
     redirects: withBase({
-      ...(DOCS_LOCAL_WITHOUT_STAINLESS
-        ? {
-            "/reference/tiger-cloud-rest": "/reference/tiger-cloud-rest-local-preview",
-          }
-        : {}),
+      "/reference/tiger-cloud-rest": "/reference/tiger-cloud-rest-local-preview",
       "/deploy/tiger-cloud/pricing-and-account-management":
         "/deploy/tiger-cloud/tiger-cloud-aws/pricing-and-account-management",
       "/deploy/tiger-cloud/tiger-cloud-azure/security/vpc":

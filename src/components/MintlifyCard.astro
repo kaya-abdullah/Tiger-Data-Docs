@@ -1,0 +1,33 @@
+---
+interface Props {
+  title: string;
+  href?: string;
+  icon?: any;
+}
+
+const { title, href, icon: Icon } = Astro.props;
+---
+
+<article class="docs-card">
+  {href ? <a class="docs-card__link" href={href} aria-label={title}></a> : null}
+  <div class="docs-card__title">
+    {Icon ? <Icon aria-hidden="true" size={20} /> : null}
+    <span>{title}</span>
+  </div>
+  <div class="docs-card__body"><slot /></div>
+</article>
+
+<style>
+  .docs-card {
+    position: relative;
+    border: 1px solid var(--sl-color-gray-5);
+    border-radius: 0.5rem;
+    padding: 1rem;
+    background: var(--sl-color-bg-nav);
+  }
+  .docs-card:hover { border-color: var(--sl-color-accent); }
+  .docs-card__link { position: absolute; inset: 0; z-index: 1; }
+  .docs-card__title { display: flex; align-items: center; gap: 0.5rem; font-weight: 700; }
+  .docs-card__body { margin-top: 0.5rem; }
+  .docs-card__body :global(a) { position: relative; z-index: 2; }
+</style>

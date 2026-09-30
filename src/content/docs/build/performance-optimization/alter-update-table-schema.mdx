@@ -5,7 +5,7 @@ products: [cloud, self_hosted]
 ---
 
 import * as C from "@constants";
-import { Callout } from "@stainless-api/docs/components";
+import { Callout } from "@components/docs-components";
 import { NumberedList, NumberedItem } from "@components/NumberedList";
 
 Schema changes on a {C.HYPERTABLE} use normal {C.PG} `ALTER TABLE` syntax, and {C.TIMESCALE_DB} propagates those changes to every underlying {C.CHUNK}.

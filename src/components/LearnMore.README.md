@@ -314,7 +314,7 @@ learnMore:
 ## Testing locally
 
 1. Add or edit `learnMore:` in a page's frontmatter.
-2. Run `pnpm dev` (or `pnpm dev:local` if you don't have a Stainless API key).
+2. Run `pnpm dev`.
 3. Open the page at `http://localhost:4321/<your-page-path>`.
 4. Resize the browser to at least **1024px wide**. The card lives in the right rail, which collapses on smaller viewports.
 5. Toggle light/dark mode and confirm the card flips colors correctly.

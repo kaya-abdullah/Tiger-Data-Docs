@@ -7,7 +7,7 @@ keywords: [data tiering, policies, add]
 
 import * as C from "@constants";
 
-import { Callout } from '@stainless-api/docs/components';
+import { Callout } from '@components/docs-components';
 
 Create a policy that periodically moves {C.CHUNK}s older than a given age from local storage to tiered object storage. The policy runs as a {C.CLOUD_LONG} background job and applies to all {C.CHUNK}s of the target {C.HYPERTABLE}, including the {C.MAT_HYPERTABLE}s that back {C.CAGG}s.
 

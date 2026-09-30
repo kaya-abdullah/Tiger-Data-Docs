@@ -1,13 +1,12 @@
 /**
  * Copy to clipboard button – copies a given string on click and shows "Copied!" feedback.
  * Matches SecondaryButton styling (Figma 3245-9636, 3245-9637) for consistency with
- * the Stainless Docs Platform and Tiger Data design system.
+ * the Tiger Data design system.
  *
  * Use for connection strings, one-line code snippets, or any text you want users to
  * copy with one click. For full code blocks, rely on Expressive Code’s built-in copy
  * button in Starlight.
  *
- * @see https://www.stainless.com/docs/docs-platform
  * @see README-component.md – Copy to clipboard section
  */
 import { useState, useCallback, useRef, useEffect } from "react";

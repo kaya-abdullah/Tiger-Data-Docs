@@ -3,15 +3,12 @@
  * Tab hover dropdowns: one panel, top-level sidebar sections only (no nested page links).
  * Each section row uses sectionIndexHref so the heading goes to that area’s hub when defined.
  */
-import { Button } from "@stainless-api/ui-primitives";
 import { TABS } from "virtual:stl-docs-virtual-module";
-import type { StarlightRouteData } from "@astrojs/starlight/route-data";
 import type { NavTreeNode } from "./nav-dropdown-tree-types";
 import NavDropdownTree from "./NavDropdownTree.astro";
 
 /**
- * Tab shape from `stainlessDocs({ tabs: [...] })` in `astro.config.ts`.
- * `virtual:stl-docs-virtual-module` only declares `label`, `link`, and `hidden`; sidebar config is added at runtime.
+ * Tab shape from the local docs configuration in `astro.config.ts`.
  */
 type NavTabConfig = {
   label: string;
@@ -24,10 +21,10 @@ type NavTabWithActive = NavTabConfig & { active: boolean };
 
 const tabsFromConfig = TABS as readonly NavTabConfig[];
 
-const routeData = Astro.locals.starlightRoute as StarlightRouteData & {
-  _stlDocs?: { activeTabIndex?: number };
-};
-const activeTabIndex = routeData?._stlDocs?.activeTabIndex ?? -1;
+const currentUrlPath = Astro.url.pathname.replace(/\/$/, "") || "/";
+const activeTabIndex = tabsFromConfig.findIndex((tab) =>
+  currentUrlPath === tab.link || currentUrlPath.startsWith(`${tab.link}/`)
+);
 
 const tabList: NavTabWithActive[] = tabsFromConfig
   .map(
@@ -299,21 +296,18 @@ for (const item of navItems) {
 <div class="stl-secondary-nav-tabs stl-nav-tabs-with-dropdown">
   <ul>
     <li class:list={["nav-home-item", isHomeActive && "active"]}>
-      <Button
+      <a
         href={docsHomeLink}
-        variant="ghost"
-        className={["nav-home-link", isHomeActive && "stl-active-secondary-link"].filter(Boolean).join(" ")}
+        class:list={["nav-home-link", isHomeActive && "stl-active-secondary-link"]}
         aria-label="Docs homepage"
       >
-        <Button.Label>
-          <span class="nav-home-icon" aria-hidden="true">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-              <polyline points="9 22 9 12 15 12 15 22" />
-            </svg>
-          </span>
-        </Button.Label>
-      </Button>
+        <span class="nav-home-icon" aria-hidden="true">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+            <polyline points="9 22 9 12 15 12 15 22" />
+          </svg>
+        </span>
+      </a>
     </li>
     {
       navItems.map((item) => {
@@ -324,20 +318,17 @@ for (const item of navItems) {
           <li class:list={[item.active && "active"]}>
             {hasDropdown ? (
               <div class="nav-dropdown-wrapper">
-                <Button
+                <a
                   href={item.link}
-                  variant="ghost"
-                  className={["nav-trigger", item.active && "stl-active-secondary-link"].filter(Boolean).join(" ")}
+                  class:list={["nav-trigger", item.active && "stl-active-secondary-link"]}
                 >
-                  <Button.Label>
-                    {item.label}
-                    <span class="nav-chevron" aria-hidden="true">
-                      <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-                      </svg>
-                    </span>
-                  </Button.Label>
-                </Button>
+                  {item.label}
+                  <span class="nav-chevron" aria-hidden="true">
+                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                  </span>
+                </a>
                 <div class="nav-dropdown nav-dropdown--tree" role="menu">
                   <a href={item.link} class="nav-dropdown-item nav-dropdown-item--overview" role="menuitem">
                     <span class="nav-dropdown-item-title">{item.label}</span>
@@ -348,9 +339,7 @@ for (const item of navItems) {
                 </div>
               </div>
             ) : (
-              <Button href={item.link} variant="ghost" className={item.active ? "stl-active-secondary-link" : undefined}>
-                <Button.Label>{item.label}</Button.Label>
-              </Button>
+              <a href={item.link} class:list={[item.active && "stl-active-secondary-link"]}>{item.label}</a>
             )}
           </li>
         );
