@@ -10,12 +10,13 @@ integrationCardTitle: "Apache Iceberg destination connector"
 integrationCardLogo: "tigerlake-destination.png"
 integrationCardLogoDark: "tigerlake-destination-dark.png"
 sidebar:
-  label: "TigerLake"
+  label: "Tiger Lake"
 ---
 
 import * as C from "@constants";
 
 import { Tabs, Tab } from '@stainless-api/docs/stainless-docs/mintlify-compat';
+import { Callout } from "@stainless-api/docs/components";
 
 import IntegrationPrereqsCloud from '@partials/_prereqs-cloud-no-connection.mdx';
 import NotSupportedAzure from '@partials/_not-supported-for-azure.mdx';
@@ -26,13 +27,22 @@ import ThemeImage from "@components/ThemeImage.astro";
 import imgIcebergConnectorTigerCloudLight from "../../../../../assets/images/integrate/connectors/iceberg-connector-tiger-cloud.png";
 import imgIcebergConnectorTigerCloudDark from "../../../../../assets/images/integrate/connectors/iceberg-connector-tiger-cloud-dark.png";
 
-{C.LAKE_LONG} enables you to build real-time applications alongside efficient data pipeline management within a single
+{C.ICEBERG_CONNECTOR_LONG} enables you to build real-time applications alongside efficient data pipeline management within a single
 system.
 
-<ThemeImage light={imgIcebergConnectorTigerCloudLight} dark={imgIcebergConnectorTigerCloudDark} alt="TigerLake architecture: Iceberg connector in Tiger Cloud" />
+<ThemeImage light={imgIcebergConnectorTigerCloudLight} dark={imgIcebergConnectorTigerCloudDark} alt="Tiger Lake architecture: Iceberg connector in Tiger Cloud" />
 
-{C.LAKE_LONG} is a native integration enabling synchronization between {C.HYPERTABLE}s and relational tables
-running in {C.SERVICE_LONG}s to Iceberg tables running in [Amazon S3 Tables](https://aws.amazon.com/s3/features/tables/) in your AWS account.
+{C.ICEBERG_CONNECTOR_LONG} synchronizes {C.HYPERTABLE}s and relational tables running in {C.SERVICE_LONG}s to Apache Iceberg
+tables. You can write to [Amazon S3 Tables](https://aws.amazon.com/s3/features/tables/) in your AWS account, or
+connect to a compatible Iceberg REST catalog.
+
+{C.ICEBERG_CONNECTOR_SHORT} takes an initial snapshot of the source table, then continuously applies inserts, updates, and
+deletes using {C.PG} logical replication. This makes operational data available in your data lake without building
+and operating a separate ETL pipeline.
+
+Once set up, you can query that data directly. For example, see
+[Query {C.LAKE} S3 Tables with AWS Glue and Athena](/integrate/connectors/destination/athena) or
+[Query {C.LAKE} S3 Tables from Snowflake](/integrate/connectors/destination/snowflake).
 
 <Prerequisites context="integration">
 <IntegrationPrereqsCloud />
@@ -40,9 +50,22 @@ running in {C.SERVICE_LONG}s to Iceberg tables running in [Amazon S3 Tables](htt
 
 <NotSupportedAzure />
 
-## Integrate a data lake with your service
+## Choose an Iceberg catalog
 
-To connect a {C.SERVICE_LONG} to your data lake:
+{C.ICEBERG_CONNECTOR_LONG} supports the following catalog options:
+
+| Catalog | Use when |
+| --- | --- |
+| Amazon S3 Tables | You want an AWS-managed Iceberg catalog and storage service. {C.ICEBERG_CONNECTOR_SHORT} connects using an IAM role. |
+| Generic Iceberg REST catalog | You already use a compatible Iceberg REST catalog, such as Snowflake Open Catalog, Apache Polaris, or Snowflake Horizon Catalog. {C.ICEBERG_CONNECTOR_SHORT} connects using OAuth 2.0 client credentials or a personal access token. |
+
+Amazon S3 Tables is configured separately because it uses AWS IAM and SigV4 authentication. Generic REST catalogs
+use the Iceberg REST Catalog API, and can provide access to the underlying object storage through vended
+credentials.
+
+## Connect using Amazon S3 Tables
+
+To connect a {C.SERVICE_LONG} to Amazon S3 Tables:
 
 <Tabs>
   <Tab title="AWS Management Console">
@@ -63,14 +86,14 @@ To connect a {C.SERVICE_LONG} to your data lake:
         1. In `Specify stack details`, enter the following details, then click `Next`:
            - `Stack Name`: a name for this CloudFormation stack
            - `BucketName`: a name for this S3 table bucket
-           - `ProjectID` and `ServiceID`: enter the [connection details](/integrate/find-connection-details#find-your-project-and-service-id) for your {C.LAKE_LONG} {C.SERVICE_SHORT}
+           - `ProjectID` and `ServiceID`: enter the [connection details](/integrate/find-connection-details#find-your-project-and-service-id) for your {C.ICEBERG_CONNECTOR_LONG} {C.SERVICE_SHORT}
         1. In `Configure stack options` check `I acknowledge that AWS CloudFormation might create IAM resources`, then click `Next`.
         1. In `Review and create`, click `Submit`, then wait for the deployment to complete. AWS deploys your stack and creates the S3 table bucket and IAM role.
         1. Click `Outputs`, then copy all four outputs.
       </NumberedItem>
       <NumberedItem title={`Connect your ${C.SERVICE_SHORT} to the data lake`}>
         1. In [{C.CONSOLE}](https://console.cloud.tigerdata.com/dashboard/services), select the {C.SERVICE_SHORT} you want to integrate with AWS S3 Tables, then click `Connectors`.
-        1. Select the Apache Iceberg connector and supply the:
+        1. Select the {C.ICEBERG_CONNECTOR_SHORT} and supply the:
            - ARN of the S3Table bucket
            - ARN of a role with permissions to write to the table bucket
 
@@ -106,7 +129,7 @@ To connect a {C.SERVICE_LONG} to your data lake:
       </NumberedItem>
       <NumberedItem title={`Connect your ${C.SERVICE_SHORT} to the data lake`}>
         1. In [{C.CONSOLE}](https://console.cloud.tigerdata.com/dashboard/services), select the {C.SERVICE_SHORT} you want to integrate with AWS S3 Tables, then click `Connectors`.
-        1. Select the Apache Iceberg connector and supply the:
+        1. Select the {C.ICEBERG_CONNECTOR_SHORT} and supply the:
            - ARN of the S3Table bucket
            - ARN of a role with permissions to write to the table bucket
 
@@ -153,7 +176,7 @@ To connect a {C.SERVICE_LONG} to your data lake:
            ```
 
            `"Principal": { "AWS": "arn:aws:iam::123456789012:root" }` does not mean `root` access. This delegates permissions to the entire AWS account, not just the root user.
-        1. Replace `<ProjectID>` and `<ServiceID>` with the [connection details](/integrate/find-connection-details#find-your-project-and-service-id) for your {C.LAKE_LONG} {C.SERVICE_SHORT}, then click `Next`.
+        1. Replace `<ProjectID>` and `<ServiceID>` with the [connection details](/integrate/find-connection-details#find-your-project-and-service-id) for your {C.ICEBERG_CONNECTOR_LONG} {C.SERVICE_SHORT}, then click `Next`.
         1. In `Permissions policies`, click `Next`.
         1. In `Role details`, enter `Role name`, then click `Create role`.
         1. In `Roles`, select the role you just created, then click `Add Permissions` > `Create inline policy`.
@@ -187,7 +210,7 @@ To connect a {C.SERVICE_LONG} to your data lake:
       </NumberedItem>
       <NumberedItem title={`Connect your ${C.SERVICE_SHORT} to the data lake`}>
         1. In [{C.CONSOLE}](https://console.cloud.tigerdata.com/dashboard/services), select the {C.SERVICE_SHORT} you want to integrate with AWS S3 Tables, then click `Connectors`.
-        1. Select the Apache Iceberg connector and supply the:
+        1. Select the {C.ICEBERG_CONNECTOR_SHORT} and supply the:
            - ARN of the S3Table bucket
            - ARN of a role with permissions to write to the table bucket
 
@@ -196,6 +219,80 @@ To connect a {C.SERVICE_LONG} to your data lake:
     </NumberedList>
   </Tab>
 </Tabs>
+
+<Callout variant="important">
+If your table bucket is encrypted with a customer managed AWS KMS key ([SSE-KMS](https://docs.aws.amazon.com/AmazonS3/latest/userguide/s3-tables-kms-encryption.html)) instead of the default AWS managed encryption, the role you supply to {C.ICEBERG_CONNECTOR_LONG} also needs `kms:GenerateDataKey` and `kms:Decrypt` permissions on that key. Without them, {C.ICEBERG_CONNECTOR_SHORT} cannot write to the bucket and syncs fail with a `not authorized to perform: kms:GenerateDataKey` error. Add the following statement to the role's inline policy, replacing `<KMS_KEY_ARN>` with the ARN of your KMS key:
+
+```json
+{
+  "Sid": "KMSAccess",
+  "Effect": "Allow",
+  "Action": [
+    "kms:GenerateDataKey",
+    "kms:Decrypt"
+  ],
+  "Resource": "<KMS_KEY_ARN>"
+}
+```
+</Callout>
+
+## Connect using an Iceberg REST catalog
+
+Before creating the connector, configure a catalog principal with permission to:
+
+- Access the target warehouse.
+- List and create namespaces.
+- Create and update Iceberg tables.
+- Commit Iceberg table metadata.
+- Access the underlying object storage, if the catalog vends storage credentials.
+
+To connect your {C.SERVICE_LONG} to a generic Iceberg REST catalog:
+
+<NumberedList>
+  <NumberedItem title="Select the catalog type">
+    1. In [{C.CONSOLE}](https://console.cloud.tigerdata.com/dashboard/services), select the {C.SERVICE_SHORT} you want to integrate with your Iceberg catalog, then click `Connectors`.
+    1. Select the {C.ICEBERG_CONNECTOR_SHORT}, then select `Generic REST catalog`.
+    1. Choose a preset for your catalog provider, or select `Generic REST` to configure the connection manually.
+  </NumberedItem>
+  <NumberedItem title="Configure the catalog connection">
+    Enter the catalog connection and authentication settings:
+
+    | Setting | Required | Description |
+    | --- | --- | --- |
+    | `Catalog URI` | Yes | HTTPS base URL of the Iceberg REST catalog. Don't include a namespace or table path. |
+    | `Warehouse` | Yes | Warehouse, catalog, or external volume identifier expected by the catalog. The exact value depends on the catalog provider. |
+    | `Client ID` | No | OAuth 2.0 client identifier. Leave empty when authenticating with a personal access token instead. |
+    | `Client secret` | Yes | OAuth 2.0 client secret, or personal access token. {C.CLOUD_LONG} stores this value securely. |
+    | `Scope` | No | OAuth 2.0 scope required by the catalog. |
+    | `Vended credentials` | No | Requests temporary object storage credentials from the catalog. Turn this on if your catalog supports it. |
+    | `Additional headers` | No | Catalog-specific HTTP headers to include with REST requests. |
+  </NumberedItem>
+  <NumberedItem title="Create the connector">
+    Click `Set up connector`. {C.CLOUD_LONG} validates the catalog connection, credentials, and warehouse access
+    before creating the connector.
+  </NumberedItem>
+</NumberedList>
+
+<Callout variant="important">
+The catalog URI must use HTTPS. The catalog principal must have permission to access the configured warehouse, and
+to create or update its Iceberg namespaces and tables.
+</Callout>
+
+### Storage access for REST catalogs
+
+A REST catalog manages Iceberg metadata; the underlying table data is still stored in object storage. When you turn
+on `Vended credentials`, {C.ICEBERG_CONNECTOR_SHORT} requests temporary storage credentials from the catalog and uses them to
+write Iceberg data files. Otherwise, configure your catalog's own access controls to grant {C.ICEBERG_CONNECTOR_SHORT} the
+storage access it needs directly.
+
+### Catalog-specific setup
+
+The endpoint, warehouse identifier, OAuth 2.0 scope, and access-control model differ between catalog providers. Create
+the required catalog principal and warehouse permissions in your catalog provider's own console before configuring
+the connector in {C.CONSOLE}.
+
+Selecting a preset in {C.CONSOLE} fills in known defaults for that provider. It doesn't create the warehouse,
+catalog principal, or permissions on your behalf.
 
 ## Stream data from your service to your data lake
 
@@ -222,7 +319,10 @@ ALTER TABLE <table_name> SET (
   tigerlake.iceberg_sync = true | false,
   tigerlake.iceberg_partitionby = '<partition_specification>',
   tigerlake.iceberg_namespace = '<namespace>',
-  tigerlake.iceberg_table = '<table>'
+  tigerlake.iceberg_table = '<table>',
+  tigerlake.iceberg_spec_version = 2 | 3,
+  tigerlake.enable_tiered_reads = true | false,
+  tigerlake.iceberg_changelog_mode = true | false
 )
 ```
 
@@ -233,6 +333,18 @@ ALTER TABLE <table_name> SET (
   to {C.HYPERTABLE}s. For more information, see [partitioning](/integrate/connectors/destination/tigerlake#partitioning-intervals).
 - `tigerlake.iceberg_namespace`: optional property to set a namespace, the default is `timescaledb`.
 - `tigerlake.iceberg_table`: optional property to specify a different table name. If no name is specified the {C.PG} table name is used.
+- `tigerlake.iceberg_spec_version`: optional `integer`, either `2` or `3`. The default for new syncs is `3`. Set it
+  to `2` if the query engine or catalog you read the table with does not support format version 3. You can only set
+  this property when you start the sync. For more information, see
+  [Iceberg format version](/integrate/connectors/destination/tigerlake#iceberg-format-version).
+- `tigerlake.enable_tiered_reads`: optional `boolean`, the default is `true`. Set to `false` to exclude data that has
+  been moved to the [low-cost object storage tier](/learn/data-lifecycle/storage/about-storage-tiers) from the sync.
+  You can only set this property when you start the sync. For more information, see
+  [tiered data](/integrate/connectors/destination/tigerlake#tiered-data).
+- `tigerlake.iceberg_changelog_mode`: optional `boolean`, the default is `false`. Set to `true` to write the Iceberg
+  table as an append-only change log instead of one row per primary key. You can only set this property when you
+  start the sync. For more information, see
+  [changelog mode](/integrate/connectors/destination/tigerlake#changelog-mode).
 
 ### Partitioning intervals
 
@@ -249,6 +361,99 @@ By default, the partition interval for an Iceberg table is one day(time-column) 
 | `truncate[W]` | Value truncated to width W, see [options](https://iceberg.apache.org/spec/#truncate-transform-details)       |
 
 These partitions define the behavior using the [Iceberg partition specification](https://iceberg.apache.org/spec/#partition-transforms).
+
+### Tiered data
+
+By default, data that has been moved to the [low-cost object storage tier](/learn/data-lifecycle/storage/about-storage-tiers)
+is synced to Iceberg along with the data in local storage. To exclude it, set `tigerlake.enable_tiered_reads` to
+`false` in the same statement that starts the sync:
+
+```sql
+ALTER TABLE my_hypertable SET (
+  tigerlake.iceberg_sync = true,
+  tigerlake.enable_tiered_reads = false
+);
+```
+
+Note the following:
+
+- You can only set `tigerlake.enable_tiered_reads` when you start the sync. Setting it on a table that is already
+  syncing returns an error, because whether tiered data is included changes which rows the initial snapshot reads.
+  To change it, stop the sync and start a new one.
+- This property applies to the sync only, and is independent of the `timescaledb.enable_tiered_reads` setting that
+  controls whether [your own queries read tiered data](/build/data-management/storage/query-tiered-data). Setting
+  `tigerlake.enable_tiered_reads` to `false` keeps tiered data out of Iceberg even when
+  `timescaledb.enable_tiered_reads` is enabled for the database or the session.
+- Tiered data can be much larger than the data in local storage. Including it increases both the duration of the
+  initial snapshot and the volume of data written to Iceberg.
+- Tables that started syncing before this property was available were stamped with the value of
+  `timescaledb.enable_tiered_reads` at the time of the upgrade, so their behavior did not change.
+
+### Iceberg format version
+
+New syncs create the Iceberg table using [format version](https://iceberg.apache.org/spec/#format-versioning) 3.
+To use format version 2 instead, set `tigerlake.iceberg_spec_version` in the statement that starts the sync:
+
+```sql
+ALTER TABLE my_hypertable SET (
+  tigerlake.iceberg_sync = true,
+  tigerlake.iceberg_spec_version = 2
+);
+```
+
+Note the following:
+
+- The only accepted values are `2` and `3`. Any other value returns an error.
+- You can only set `tigerlake.iceberg_spec_version` when you start the sync. To change the format version of a table
+  that is already syncing, stop the sync and start a new one.
+- Tables that started syncing before this property was available remain on format version 2.
+
+### Changelog mode
+
+By default, the Iceberg table holds one row per primary key. Updates and deletes are applied in place using Iceberg
+equality deletes. Some query engines, such as Snowflake and Databricks, do not implement the full Iceberg
+specification and cannot read equality delete files. These engines fail or return an error when the table contains
+them.
+
+Changelog mode writes every change as an insert into the Iceberg table, so the sync never produces an equality
+delete. Use it when a downstream engine cannot read equality deletes, or when it reads the raw change events and
+merges them itself.
+
+To turn it on, set `tigerlake.iceberg_changelog_mode` to `true` in the same statement that starts the sync:
+
+```sql
+ALTER TABLE my_hypertable SET (
+  tigerlake.iceberg_sync = true,
+  tigerlake.iceberg_changelog_mode = true
+);
+```
+
+The following table compares the two modes:
+
+|  | Default | Changelog mode |
+| --- | --- | --- |
+| Table shape | One row per primary key | One row per change |
+| Updates and deletes | Applied with equality deletes | Appended as new rows, nothing is removed |
+| Extra columns | None | `_tsdb_op` and `_tsdb_commit_lsn` |
+| Iceberg identifier fields and sort order | The primary key columns | None |
+
+Changelog mode adds two columns to the Iceberg table:
+
+- `_tsdb_op`: a required `string` that holds `INSERT`, `UPDATE`, or `DELETE`. Rows written by the initial snapshot
+  hold `INSERT`.
+- `_tsdb_commit_lsn`: an optional `long` that holds the commit log sequence number (LSN) of the {C.PG} transaction that produced the
+  change. Rows written by the initial snapshot have no originating transaction, so this column is empty for them.
+
+Note the following:
+
+- You can only set `tigerlake.iceberg_changelog_mode` when you start the sync. Setting it on a table that is already
+  syncing returns an error. To change it, stop the sync and start a new one.
+- Several changes to the same primary key inside one {C.PG} transaction collapse into a single row that holds the
+  net effect of that transaction.
+- The source table must not have a column named `_tsdb_op` or `_tsdb_commit_lsn`, because the names collide with
+  the preceding columns. Starting the sync returns an error. Rename the column first, or start the sync without
+  changelog mode.
+- The Iceberg table has no identifier fields and no sort order, because many rows share the same primary key.
 
 ### Sample code
 
@@ -339,10 +544,13 @@ ALTER TABLE Mixed_CASE_TableNAME SET (
 ## Limitations
 
 - Service requires {C.PG} 17.6 and above is supported.
-- [Amazon S3 Tables Iceberg REST](https://docs.aws.amazon.com/AmazonS3/latest/userguide/s3-tables-integrating-open-source.html) catalog only is supported.
+- [Amazon S3 Tables](https://docs.aws.amazon.com/AmazonS3/latest/userguide/s3-tables-integrating-open-source.html) and compatible generic Iceberg REST catalogs are supported. Catalog behavior, authentication requirements, and support for vended credentials vary by provider. Amazon S3 Tables is the most thoroughly tested catalog: confirm the support status of a specific REST catalog before using it for a production workload.
+- Generic REST catalogs support OAuth 2.0 client-credentials and personal-access-token authentication. Direct configuration of credentials for the underlying object storage is not available; use catalog-vended credentials instead.
+- Connecting to a REST catalog provides catalog-managed Iceberg tables. It does not provide native ingestion features specific to that catalog's platform (for example, Snowflake Snowpipe or Streams).
+- Throughput figures in [Stream data from your service to your data lake](#stream-data-from-your-service-to-your-data-lake) were measured using Amazon S3 Tables. Generic REST catalog throughput can differ, depending on the catalog's own API latency and table-commit performance.
 - In order to collect deletes made to data in the columstore, certain columnstore optimizations are disabled for {C.HYPERTABLE}s, this includes [Direct Compress](/learn/hypertables/optimize-data-in-hypertables#speed-up-data-ingestion).
 - The `TRUNCATE` statement is not supported, and does not truncate data in the corresponding Iceberg table.
-- Data in a {C.HYPERTABLE} that has been moved to the [low-cost object storage tier](/learn/data-lifecycle/storage/about-storage-tiers) is not synced.
+- You can only choose whether a sync includes [tiered data](/integrate/connectors/destination/tigerlake#tiered-data) when you start the sync. To change it later, stop the sync and start a new one.
 - Writing to the same S3 table bucket from multiple services is not supported, bucket-to-service mapping is one-to-one.
 - Iceberg snapshots are pruned automatically if the amount exceeds 2500.
 - A {C.HYPERTABLE} with long running continuous aggregates refresh transactions, plus 30 minutes, can cause issues with holding the replication slot too long. Please consider batching in these cases.

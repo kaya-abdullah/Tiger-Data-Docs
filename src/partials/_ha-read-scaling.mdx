@@ -2,14 +2,18 @@ import * as C from "@constants";
 import { NumberedList, NumberedItem } from "@components/NumberedList";
 import { Prerequisites } from "@components/Prerequisites";
 
-import { Image } from "astro:assets";
 import ThemeImage from "@components/ThemeImage.astro";
 import imgReadScalingTimescaleLight from "../assets/images/learn/deep-dive/horizontal-read-scaling-in-tiger-cloud-light.png";
 import imgReadScalingTimescaleDark from "../assets/images/learn/deep-dive/horizontal-read-scaling-in-tiger-cloud-dark.png";
-import imgCreateReadReplicaSetTigerConsole from "../assets/images/deploy/tiger-cloud/create-read-replica-set-tiger-console.png";
-import imgReadReplicaSetsTigerConsole from "../assets/images/deploy/tiger-cloud/read-replica-sets-tiger-console.png";
-import imgReadReplicaSetConfigTigerConsole from "../assets/images/deploy/tiger-cloud/read-replica-set-config-tiger-console.png";
-import imgConfiguredReplicaSetTigerConsole from "../assets/images/deploy/tiger-cloud/configured-replica-set-tiger-console.png";
+import imgCreateReadReplicaSetTigerConsoleLight from "../assets/images/deploy/tiger-cloud/create-read-replica-set-tiger-console.png";
+import imgCreateReadReplicaSetTigerConsoleDark from "../assets/images/deploy/tiger-cloud/create-read-replica-set-tiger-console-dark.png";
+import imgReadReplicaSetsTigerConsoleLight from "../assets/images/deploy/tiger-cloud/read-replica-sets-tiger-console.png";
+import imgReadReplicaSetsTigerConsoleDark from "../assets/images/deploy/tiger-cloud/read-replica-sets-tiger-console-dark.png";
+import imgReadReplicaSetConfigTigerConsoleLight from "../assets/images/deploy/tiger-cloud/read-replica-set-config-tiger-console.png";
+import imgReadReplicaSetConfigTigerConsoleDark from "../assets/images/deploy/tiger-cloud/read-replica-set-config-tiger-console-dark.png";
+import imgConfiguredReplicaSetTigerConsoleLight from "../assets/images/deploy/tiger-cloud/configured-replica-set-tiger-console.png";
+import imgConfiguredReplicaSetTigerConsoleDark from "../assets/images/deploy/tiger-cloud/configured-replica-set-tiger-console-dark.png";
+import TestPlan from "@components/TestPlan.astro";
 
 When read-intensive workloads compete with high ingest rates, your primary data instance can become a bottleneck. Spiky query traffic, analytical dashboards, and business intelligence tools risk slowing down ingest performance and disrupting critical write operations.
 
@@ -56,7 +60,7 @@ To create a secure {C.READ_REPLICA} set for your read-intensive apps:
 
 Configure the number of nodes, compute size, connection pooling, and the name for your replica, then click `Create read replica set`.
 
-<Image src={imgCreateReadReplicaSetTigerConsole} alt="Create a set in" />
+<ThemeImage light={imgCreateReadReplicaSetTigerConsoleLight} dark={imgCreateReadReplicaSetTigerConsoleDark} alt="Create a set in" />
 
 </NumberedItem>
 
@@ -84,13 +88,13 @@ To change the compute and storage configuration of your {C.READ_REPLICA} set:
 
 <NumberedItem title={`In ${C.CONSOLE}, expand and click the ${C.READ_REPLICA} set under your primary ${C.SERVICE_SHORT}`}>
 
-<Image src={imgReadReplicaSetsTigerConsole} alt="s in" />
+<ThemeImage light={imgReadReplicaSetsTigerConsoleLight} dark={imgReadReplicaSetsTigerConsoleDark} alt="s in" />
 
 </NumberedItem>
 
 <NumberedItem title="Click `Operations` > `Compute and storage`">
 
-<Image src={imgReadReplicaSetConfigTigerConsole} alt="compute and storage in" />
+<ThemeImage light={imgReadReplicaSetConfigTigerConsoleLight} dark={imgReadReplicaSetConfigTigerConsoleDark} alt="compute and storage in" />
 
 </NumberedItem>
 
@@ -115,7 +119,7 @@ is measured in bytes, against the current state of the primary instance. To chec
 
 You see a list of configured {C.READ_REPLICA} sets for this {C.SERVICE_SHORT}, including their status and lag:
 
-<Image src={imgConfiguredReplicaSetTigerConsole} alt="sets" />
+<ThemeImage light={imgConfiguredReplicaSetTigerConsoleLight} dark={imgConfiguredReplicaSetTigerConsoleDark} alt="sets" />
 
 </NumberedItem>
 
@@ -123,7 +127,7 @@ You see a list of configured {C.READ_REPLICA} sets for this {C.SERVICE_SHORT}, i
 
 1. Select the replica set in the list.
 1. Click `Operations` > `Database parameters`.
-1. Adjust `max_standby_streaming_delay` and `max_standby_archive_delay`. This is not recommended for cases where changes must be immediately represented, for example, for user credentials.
+1. Adjust `max_standby_streaming_delay` and `max_standby_archive_delay`, then click `Apply changes` and confirm. This is not recommended for cases where changes must be immediately represented, for example, for user credentials.
 
 </NumberedItem>
 
@@ -150,3 +154,47 @@ Confirm the deletion when prompted.
 </NumberedItem>
 
 </NumberedList>
+
+<TestPlan>
+
+1. fork the service
+2. select the service
+3. run SQL: `CREATE ROLE readaccess;`
+4. run SQL: `GRANT USAGE ON SCHEMA public TO readaccess;`
+5. run SQL: `GRANT SELECT ON ALL TABLES IN SCHEMA public TO readaccess;`
+6. run SQL: `CREATE USER read_user WITH PASSWORD '$READ_USER_PASSWORD';`
+7. run SQL: `GRANT readaccess TO read_user;`
+8. expect rows: `SELECT 1 FROM pg_roles WHERE rolname = 'read_user' AND rolcanlogin`
+9. click `Operations` > `Read scaling`
+10. expect url /operations/read-replicas
+11. click `Add a read replica set`
+12. click `Create read replica set`
+13. expect label `Service created`
+14. select the service
+15. click `Operations` > `Read scaling`
+16. [resolve: link icon next to the replica set]
+17. expect label `Quick connect`
+18. dismiss
+19. select the service
+20. click `Operations` > `Read scaling`
+21. expect label `Lag`
+22. [resolve: the replica set in the list]
+23. click `Operations` > `Database parameters`
+24. edit `max_standby_streaming_delay`
+25. edit `max_standby_archive_delay`
+26. click `Apply changes`
+27. confirm `Confirm`
+28. expect no label `Apply changes?`
+29. [resolve: expand the read replica set under the primary service]
+30. click `Operations` > `Compute and storage`
+31. choose an unselected option
+32. click `Apply`
+33. confirm `Confirm`
+34. select the service
+35. click `Operations` > `Read scaling`
+36. [resolve: trash icon next to the replica set]
+37. type the value the dialog asks for
+38. confirm `Delete replica set`
+
+</TestPlan>
+

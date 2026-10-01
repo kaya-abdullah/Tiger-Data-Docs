@@ -1,23 +1,33 @@
 import * as C from "@constants";
 import { Callout } from "@stainless-api/docs/components";
 import { NumberedList, NumberedItem } from "@components/NumberedList";
+import TestPlan from "@components/TestPlan.astro";
 
 import { Image } from "astro:assets";
 import ThemeImage from "@components/ThemeImage.astro";
 import imgTigerMonitoringWorkflowDiagramLight from "../assets/images/deploy/tiger-cloud/tiger-monitoring-workflow-diagram.png";
 import imgTigerMonitoringWorkflowDiagramDark from "../assets/images/deploy/tiger-cloud/tiger-monitoring-workflow-diagram-dark.png";
-import imgServiceMetricsTigerConsole from "../assets/images/deploy/tiger-cloud/service-metrics-tiger-console.png";
+import imgServiceMetricsTigerConsoleLight from "../assets/images/deploy/tiger-cloud/service-metrics-tiger-console.png";
+import imgServiceMetricsTigerConsoleDark from "../assets/images/deploy/tiger-cloud/service-metrics-tiger-console-dark.png";
 import imgTscMetricsGraybar from "../assets/images/deploy/tiger-cloud/tsc-metrics_graybar.webp";
-import imgTigerConsoleServiceLogs from "../assets/images/deploy/tiger-cloud/tiger-console-service-logs.png";
-import imgInsightsOverviewTigerConsole from "../assets/images/deploy/tiger-cloud/insights-overview-tiger-console.png";
-import imgTigerConsoleQueryInsights from "../assets/images/deploy/tiger-cloud/tiger-console-query-insights.png";
-import imgQueryDrillDownViewTigerConsole from "../assets/images/deploy/tiger-cloud/query-drill-down-view-tiger-console.png";
-import imgTigerConsoleJobsTable from "../assets/images/deploy/tiger-cloud/tiger-console-jobs-table.png";
-import imgTigerConsoleJobsTimelineView from "../assets/images/get-started/news/tiger-console-jobs-timeline-view.png";
-import imgTigerConsoleJobDetails from "../assets/images/deploy/tiger-cloud/tiger-console-job-details.png";
-import imgTigerConsoleEditJob from "../assets/images/deploy/tiger-cloud/tiger-console-edit-job.png";
-import imgTigerConsoleServiceConnections from "../assets/images/deploy/tiger-cloud/tiger-console-service-connections.png";
-import imgRecommendationsTigerCloud from "../assets/images/deploy/tiger-cloud/recommendations-tiger-cloud.png";
+import imgTigerConsoleServiceLogsLight from "../assets/images/deploy/tiger-cloud/tiger-console-service-logs.png";
+import imgTigerConsoleServiceLogsDark from "../assets/images/deploy/tiger-cloud/tiger-console-service-logs-dark.png";
+import imgInsightsOverviewTigerConsoleLight from "../assets/images/deploy/tiger-cloud/insights-overview-tiger-console.png";
+import imgInsightsOverviewTigerConsoleDark from "../assets/images/deploy/tiger-cloud/insights-overview-tiger-console-dark.png";
+import imgTigerConsoleQueryInsightsLight from "../assets/images/deploy/tiger-cloud/tiger-console-query-insights.png";
+import imgTigerConsoleQueryInsightsDark from "../assets/images/deploy/tiger-cloud/tiger-console-query-insights-dark.png";
+import imgQueryDrillDownViewTigerConsoleLight from "../assets/images/deploy/tiger-cloud/query-drill-down-view-tiger-console.png";
+import imgQueryDrillDownViewTigerConsoleDark from "../assets/images/deploy/tiger-cloud/query-drill-down-view-tiger-console-dark.png";
+import imgTigerConsoleJobsTableLight from "../assets/images/deploy/tiger-cloud/tiger-console-jobs-table.png";
+import imgTigerConsoleJobsTableDark from "../assets/images/deploy/tiger-cloud/tiger-console-jobs-table-dark.png";
+import imgTigerConsoleJobDetailsLight from "../assets/images/deploy/tiger-cloud/tiger-console-job-details.png";
+import imgTigerConsoleJobDetailsDark from "../assets/images/deploy/tiger-cloud/tiger-console-job-details-dark.png";
+import imgTigerConsoleEditJobLight from "../assets/images/deploy/tiger-cloud/tiger-console-edit-job.png";
+import imgTigerConsoleEditJobDark from "../assets/images/deploy/tiger-cloud/tiger-console-edit-job-dark.png";
+import imgTigerConsoleServiceConnectionsLight from "../assets/images/deploy/tiger-cloud/tiger-console-service-connections.png";
+import imgTigerConsoleServiceConnectionsDark from "../assets/images/deploy/tiger-cloud/tiger-console-service-connections-dark.png";
+import imgRecommendationsTigerCloudLight from "../assets/images/deploy/tiger-cloud/recommendations-tiger-cloud.png";
+import imgRecommendationsTigerCloudDark from "../assets/images/deploy/tiger-cloud/recommendations-tiger-cloud-dark.png";
 
 Get complete visibility into your {C.SERVICE_SHORT} performance with {C.CLOUD_LONG}'s powerful monitoring suite. Whether you're optimizing for peak efficiency or troubleshooting unexpected behavior, {C.CLOUD_LONG} gives you the tools to quickly identify and resolve issues.
 
@@ -40,7 +50,7 @@ This page explains what specific data you get at each point.
 {C.CLOUD_LONG} shows you CPU, memory, and storage metrics for up to 30 previous days and with down to 10-second granularity.
 To access metrics, select your {C.SERVICE_SHORT} in {C.CONSOLE}, then click `Monitoring` > `Metrics`:
 
-<Image src={imgServiceMetricsTigerConsole} alt="Service metrics" />
+<ThemeImage light={imgServiceMetricsTigerConsoleLight} dark={imgServiceMetricsTigerConsoleDark} alt="Service metrics" />
 
 The following metrics are represented by graphs:
 
@@ -54,7 +64,7 @@ The following metrics are represented by graphs:
 When you hit the limits:
 
 - **For CPU and memory**: provision more for your {C.SERVICE_SHORT} in `Operations` > `Compute and storage`.
-- **For storage, I/O, and bandwidth**: these resources depend on your storage type and {C.IO_BOOST} settings. The standard high-performance storage gives you 16TB of compressed data on a single server, regardless of the number of hypertables in your {C.SERVICE_SHORT}. See [About storage tiers](/learn/data-lifecycle/storage/about-storage-tiers) for how to change the available storage, I/O, and bandwidth.
+- **For storage, I/O, and bandwidth**: these resources depend on your storage type and {C.IO_BOOST} settings. The high-performance storage gives you up to 64 TB of compressed data on a single server, regardless of the number of hypertables in your {C.SERVICE_SHORT}. See [About storage tiers](/learn/data-lifecycle/storage/about-storage-tiers) for how to change the available storage, I/O, and bandwidth.
 
 Hover over the graph to view metrics for a specific time point. Select an area in the graph to zoom into a specific period.
 
@@ -101,19 +111,19 @@ or degraded performance.
 
 ## Logs
 
-{C.CLOUD_LONG} shows you detailed logs for your {C.SERVICE_SHORT}, which you can filter by type, date, and time, and then export to CSV.
+{C.CLOUD_LONG} shows you detailed logs for your {C.SERVICE_SHORT}. Filter them with `Search logs`, the `From` and `To` date pickers, and `Severity type`; click `Reset filters` to clear the filters, and `Download logs` to export the filtered logs to CSV.
 
 To access logs, select your {C.SERVICE_SHORT} in {C.CONSOLE}, then click `Monitoring` > `Logs`:
 
-<Image src={imgTigerConsoleServiceLogs} alt="Find logs faster" />
+<ThemeImage light={imgTigerConsoleServiceLogsLight} dark={imgTigerConsoleServiceLogsDark} alt="Find logs faster" />
 
 ## Insights
 
 Insights help you get a comprehensive understanding of how your queries perform over time, and make the most efficient use of your resources.
 
-To view insights, select your {C.SERVICE_SHORT}, then click `Monitoring` > `Insights`. Search or filter queries by type, maximum execution time, and time frame.
+To view insights, select your {C.SERVICE_SHORT}, then click `Monitoring` > `Insights`. Narrow the queries shown with `Search by keyword`, `Show results from`, `Query type`, and `Max time >= (ms)`; click `Reset filters` to clear them.
 
-<Image src={imgInsightsOverviewTigerConsole} alt="Insights" />
+<ThemeImage light={imgInsightsOverviewTigerConsoleLight} dark={imgInsightsOverviewTigerConsoleDark} alt="Insights" />
 
 Insights include `Metrics`, `Current lock contention`, and `Queries`.
 
@@ -121,21 +131,21 @@ Insights include `Metrics`, `Current lock contention`, and `Queries`.
 
 `Current lock contention` shows how many queries or transactions are currently waiting for locks held by other queries or transactions.
 
-`Queries` displays the top 50 queries matching your search. This includes a whole range of metrics:
+`Queries` displays the top 50 queries matching your search. Choose the columns with `Columns to show`, and whether the per-query metrics show the median or P95 with the selector next to it. This includes a whole range of metrics:
 
-<Image src={imgTigerConsoleQueryInsights} alt="Queries" />
+<ThemeImage light={imgTigerConsoleQueryInsightsLight} dark={imgTigerConsoleQueryInsightsDark} alt="Queries" />
 
 | Column                | Description                                                                                     |
 |-----------------------|-------------------------------------------------------------------------------------------------|
 | `Executions`          | Number of times the query ran during the selected period.                                       |
 | `Total rows`          | Total rows scanned, inserted, or updated by the query during the selected period.               |
 | `Total time`          | Combined execution time across all runs of the query.                                           |
-| `Time (P95)`          | Execution time in the worst typical case. 95th percentile.                                      |
-| `CPU User (P95)`      | CPU spent on the query's own work — calculations, sorting, filtering. 95th percentile, in millicores. |
-| `CPU System (P95)`    | CPU spent by the OS for the query — disk reads, memory management, network I/O. 95th percentile, in millicores. |
-| `Memory (P95)`        | Memory used during query execution. 95th percentile, in MiB. |
-| `Storage read (P95)`  | Disk read operations caused by the query. 95th percentile, in ops/sec. |
-| `Storage write (P95)` | Disk write operations caused by the query. 95th percentile, in ops/sec. |
+| `Time`                | Execution time, as the median or P95 depending on the selector.                                 |
+| `CPU User`            | CPU spent on the query's own work: calculations, sorting, filtering. In millicores.             |
+| `CPU System`          | CPU spent by the OS for the query: disk reads, memory management, network I/O. In millicores.   |
+| `Memory`              | Memory used during query execution. In MiB. |
+| `Storage read`        | Disk read operations caused by the query. In ops/sec. |
+| `Storage write`       | Disk write operations caused by the query. In ops/sec. |
 | `Hypertables`         | Whether the query ran on a {C.HYPERTABLE}.                                                    |
 | `Columnar tables`     | Whether the query read data from a {C.CHUNK} in the {C.COLUMNSTORE}.                              |
 | `User name`           | The database user who ran the query.                                                       |
@@ -152,7 +162,7 @@ query. Check out the last update value at the top of the query table to identify
 
 Click a query in the list to see the drill-down view. This view not only helps you identify spikes and unexpected behaviors, but also offers information to optimize your query.
 
-<Image src={imgQueryDrillDownViewTigerConsole} alt="Queries drill-down view" />
+<ThemeImage light={imgQueryDrillDownViewTigerConsoleLight} dark={imgQueryDrillDownViewTigerConsoleDark} alt="Queries drill-down view" />
 
 This view includes the following graphs:
 
@@ -178,11 +188,11 @@ This view includes the following graphs:
 
 To view {C.JOB}s, select your {C.SERVICE_SHORT} in {C.CONSOLE}, then click `Monitoring` > `Jobs`:
 
-<Image src={imgTigerConsoleJobsTable} alt="Jobs" />
+<ThemeImage light={imgTigerConsoleJobsTableLight} dark={imgTigerConsoleJobsTableDark} alt="Jobs" />
 
-Click `Timeline` at the top right to see the recent job runs with their statuses. Select the timeframe from 1 to 24 hours:
+Click `Timeline` at the top right to see the recent job runs with their statuses. Select the timeframe, from 1 to 24 hours, in the `Last 24 hours` drop-down.
 
-<Image src={imgTigerConsoleJobsTimelineView} alt="Jobs timeline" />
+Use the `Job type` filter to narrow the list to a single kind of {C.JOB}: `User defined`, `Continuous Aggregate Refresh`, `Columnstore`, `Compaction`, `Retention`, `Tiered Storage`, or `Reorder`.
 
 </NumberedItem>
 
@@ -190,15 +200,15 @@ Click `Timeline` at the top right to see the recent job runs with their statuses
 
 Click a {C.JOB} ID in the list to view its config and run history:
 
-<Image src={imgTigerConsoleJobDetails} alt="Job details" />
+<ThemeImage light={imgTigerConsoleJobDetailsLight} dark={imgTigerConsoleJobDetailsDark} alt="Job details" />
 
 </NumberedItem>
 
 <NumberedItem title="Edit the job config">
 
-Click the pencil icon to edit the {C.JOB} config:
+Click `Edit job config`, the pencil icon, and change the settings you need, `Max runtime` for example. The drawer shows the `alter_job` statement it is about to run; click `Run` to apply it:
 
-<Image src={imgTigerConsoleEditJob} alt="Update job config" />
+<ThemeImage light={imgTigerConsoleEditJobLight} dark={imgTigerConsoleEditJobDark} alt="Update job config" />
 
 </NumberedItem>
 
@@ -208,11 +218,11 @@ Click the pencil icon to edit the {C.JOB} config:
 
 {C.CLOUD_LONG} lists current and past connections to your {C.SERVICE_SHORT}. This includes details like the corresponding query, connecting application, username, connection status, start time, and duration.
 
-To view connections, select your {C.SERVICE_SHORT} in {C.CONSOLE}, then click `Monitoring` > `Connections`. Expand the query underneath each connection to see the full SQL.
+To view connections, select your {C.SERVICE_SHORT} in {C.CONSOLE}, then click `Monitoring` > `Connections`. Turn `Show idle` off to hide idle connections. Expand the query underneath each connection to see the full SQL.
 
-<Image src={imgTigerConsoleServiceConnections} alt="Connections" />
+<ThemeImage light={imgTigerConsoleServiceConnectionsLight} dark={imgTigerConsoleServiceConnectionsDark} alt="Connections" />
 
-Click the trash icon next to a connection in the list to terminate it. A lock icon means that a connection cannot be terminated; hover over the icon to see the reason.
+Click `Terminate connection`, the trash icon next to a connection in the list, to terminate it. A lock icon means that a connection cannot be terminated; hover over the icon to see the reason.
 
 ## Recommendations
 
@@ -220,7 +230,7 @@ Click the trash icon next to a connection in the list to terminate it. A lock ic
 
 To view recommendations, select your {C.SERVICE_SHORT} in {C.CONSOLE}, then click `Monitoring` > `Recommendations`:
 
-<Image src={imgRecommendationsTigerCloud} alt="Recommendations" />
+<ThemeImage light={imgRecommendationsTigerCloudLight} dark={imgRecommendationsTigerCloudDark} alt="Recommendations" />
 
 ## Query-level statistics with `pg_stat_statements`
 
@@ -256,7 +266,7 @@ ORDER BY mean_exec_time DESC
 LIMIT 5;
 ```
 
-Or the top five queries with the highest relative variability in the execution time, expressed as a percentage:
+Or the top five queries with the highest relative variability in the execution time, expressed as a percentage. Queries whose mean execution time rounds to zero are left out, because the ratio is undefined for them:
 
 ```sql
 SELECT calls,
@@ -264,8 +274,43 @@ SELECT calls,
     query
 FROM pg_stat_statements
 WHERE pg_get_userbyid(userid) = current_user
+  AND mean_exec_time > 0
 ORDER BY rel_std_dev DESC
 LIMIT 5;
 ```
 
 For more examples and detailed explanations, see the [blog post on identifying performance bottlenecks with `pg_stat_statements`](https://www.tigerdata.com/blog/using-pg-stat-statements-to-optimize-queries).
+<TestPlan>
+
+1. fork the service
+2. select the service
+3. click `Monitoring` > `Metrics`
+4. expect url /monitoring/metrics
+5. click `Monitoring` > `Logs`
+6. expect url /monitoring/logs
+7. click `Monitoring` > `Insights`
+8. expect url /monitoring/insights
+9. click `Monitoring` > `Jobs`
+10. expect url /monitoring/jobs
+11. click `Timeline`
+12. select another option in `Last 24 hours`
+13. open the first row in the list
+14. expect url /monitoring/jobs/
+15. expect label `Job run history`
+16. click `Edit job config`
+17. expect label `Change configuration`
+18. type `00:10:00` into `Max runtime`
+19. click `Run`
+20. expect rows: `SELECT 1 FROM timescaledb_information.jobs WHERE max_runtime = INTERVAL '00:10:00'`
+21. click `Monitoring` > `Connections`
+22. expect url /monitoring/connections
+23. click `Monitoring` > `Recommendations`
+24. expect url /monitoring/recommendations
+25. run SQL: `SELECT * FROM pg_stat_statements WHERE pg_get_userbyid(userid) = current_user;`
+26. expect rows: `SELECT 1 FROM pg_stat_statements WHERE pg_get_userbyid(userid) = current_user`
+27. run SQL: `SELECT calls, mean_exec_time, query FROM pg_stat_statements WHERE pg_get_userbyid(userid) = current_user ORDER BY mean_exec_time DESC LIMIT 5;`
+28. expect rows: `SELECT 1 FROM (SELECT calls, mean_exec_time, query FROM pg_stat_statements WHERE pg_get_userbyid(userid) = current_user ORDER BY mean_exec_time DESC LIMIT 5) top HAVING count(*) BETWEEN 1 AND 5`
+29. run SQL: `SELECT calls, stddev_exec_time/mean_exec_time*100 AS rel_std_dev, query FROM pg_stat_statements WHERE pg_get_userbyid(userid) = current_user AND mean_exec_time > 0 ORDER BY rel_std_dev DESC LIMIT 5;`
+30. expect rows: `SELECT 1 FROM (SELECT calls, stddev_exec_time/mean_exec_time*100 AS rel_std_dev, query FROM pg_stat_statements WHERE pg_get_userbyid(userid) = current_user AND mean_exec_time > 0 ORDER BY rel_std_dev DESC LIMIT 5) top HAVING count(*) BETWEEN 1 AND 5`
+
+</TestPlan>

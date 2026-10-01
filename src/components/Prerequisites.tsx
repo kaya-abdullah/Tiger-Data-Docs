@@ -21,7 +21,7 @@ import type { ReactNode } from "react";
  *                           multiple independent examples.
  *
  *   context="tutorial"    → "Prerequisites for this tutorial"
- *                           Use for end-to-end learning content under /build/examples/
+ *                           Use for end-to-end learning content under /learn/tutorials/
  *                           and similar (multi-step tutorials, full walkthroughs).
  *
  *   context="integration" → "Prerequisites for this integration guide"
@@ -39,7 +39,7 @@ import type { ReactNode } from "react";
  *   import { Prerequisites } from "@components/Prerequisites";
  *
  *   <Prerequisites context="tutorial">
- *     - A [Tiger Cloud account](/get-started/quickstart/quickstart-5-minutes)
+ *     - A [Tiger Cloud account](/get-started/quickstart/create-account)
  *     - [Python 3.9+](https://www.python.org/) installed
  *   </Prerequisites>
  *
