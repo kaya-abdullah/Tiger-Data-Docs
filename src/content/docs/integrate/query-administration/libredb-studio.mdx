@@ -4,7 +4,7 @@ description: "Query, browse, and administer your database from a web-based, mult
 products: [cloud, self_hosted]
 integrationCategory: "query-administration"
 integrationPlatforms: ["aws", "azure", "self-hosted"]
-integrationIndustry: ["manufacturing", "software"]
+integrationIndustry: ["manufacturing", "saas"]
 keywords: ["libredb studio integration","sql editor","database administration","query tool","web-based ide","database management","open-source"]
 sidebar:
   label: "LibreDB Studio"
@@ -24,7 +24,7 @@ import imgLibredbStudioQueryResults from "../../../../assets/images/integrate/qu
 import imgLibredbStudioHypertableZeroRows from "../../../../assets/images/integrate/query-administration/integrations-libredb-studio-hypertable-zero-rows.png";
 import imgLibredbStudioProfileTableCorrectCount from "../../../../assets/images/integrate/query-administration/integrations-libredb-studio-profile-table-correct-count.png";
 
-[LibreDB Studio](https://github.com/libredb/libredb-studio) is an open source, web-based database editor that runs as a {C.SELF_SHORT} server or a local {C.CLI_SHORT} (`npx @libredb/studio`), with a query editor, an object browser, and a monitoring dashboard shared across {C.PG} and more than a dozen other database engines.
+[LibreDB Studio](https://github.com/libredb/libredb-studio) is an open source, web-based database editor that runs as a self-hosted server or a local CLI (`npx @libredb/studio`), with a query editor, an object browser, and a monitoring dashboard shared across {C.PG} and more than a dozen other database engines.
 
 This page explains how to integrate LibreDB Studio with your {C.SERVICE_LONG}.
 
@@ -48,7 +48,9 @@ To connect to {C.CLOUD_LONG}:
 <NumberedList>
   <NumberedItem title="Start LibreDB Studio and sign in">
 
-    Open LibreDB Studio in your browser and sign in with the admin or user account configured for your instance.
+    Open LibreDB Studio in your browser and sign in with the admin or user account configured for your instance. On the first local run, `npx @libredb/studio` prints a generated admin email and password in the terminal.
+
+    An admin account lands on the `Admin Dashboard`. Click `Editor` in the top-right corner to open the query editor.
 
   </NumberedItem>
   <NumberedItem title="Open the connection dialog">
@@ -70,7 +72,7 @@ To connect to {C.CLOUD_LONG}:
 
     A successful test reports the round-trip time, for example `Connected successfully (26ms)`. `Establish Connection` saves the connection and opens it in the editor, with the object browser populated on the left.
 
-    <Image src={imgLibredbStudioObjectBrowser} alt="LibreDB Studio after establishing the connection, with the query editor open and the object browser on the left populated with tables, including TimescaleDB's internal _timescaledb_catalog and _timescaledb_cache schemas" />
+    <Image src={imgLibredbStudioObjectBrowser} alt="LibreDB Studio query editor right after establishing the connection, with the object browser on the left showing the public schema expanded to the sensor_readings table and its four columns and types; no chunks or internal TimescaleDB schemas are listed" />
 
   </NumberedItem>
 </NumberedList>
@@ -94,12 +96,14 @@ You have successfully integrated LibreDB Studio with {C.CLOUD_LONG}.
 
     The results grid renders the rows, with the row count and execution time shown above the grid.
 
-    <Image src={imgLibredbStudioQueryResults} alt="LibreDB Studio query editor with a grouped aggregate query against the sensor_readings hypertable, and an 11-row results grid below it showing a reading count per sensor" />
+    <Image src={imgLibredbStudioQueryResults} alt="LibreDB Studio query editor with the grouped aggregate query against the sensor_readings hypertable and an 11-row results grid below it showing a reading count per sensor, with the row count and execution time shown above the grid" />
 
   </NumberedItem>
   <NumberedItem title="Browse the schema">
 
-    Search the object browser for your hypertable's name. It's listed with its columns, types, and indexes, the same way a regular table is. You see it, and can query it, exactly as you would in any other {C.PG} client.
+    In the object browser, expand your schema, then `Tables`. Your hypertable is listed as a single table, the same way a regular table is: its chunks and the internal `_timescaledb_*` schemas are not shown. Expand the hypertable to see its columns and their types. Indexes aren't listed in the tree; their size appears in the `Index` column of the `Monitoring` > `Tables` view.
+
+    To find a table by name, press `Cmd+K` on macOS or `Ctrl+K` on Linux and Windows to open the command palette, and type the name. The object browser has no search box of its own.
 
   </NumberedItem>
 </NumberedList>
@@ -108,15 +112,16 @@ You have successfully integrated LibreDB Studio with {C.CLOUD_LONG}.
 
 {C.TIMESCALE_DB} stores a {C.HYPERTABLE}'s rows in per-interval child tables (chunks) and keeps the parent table itself empty. LibreDB Studio's object browser and monitoring dashboard read table size and row count from {C.PG}'s own catalog statistics, the same source a plain {C.PG} client would use, and that catalog describes the empty parent, not the chunks underneath it. Measured against a hypertable with 8,641 real rows across 31 chunks:
 
-- **The object browser's row count reads 0** for the hypertable, and its **Table Statistics view reads 0 rows and 0 bytes** for the same table (the index is not affected: it correctly reports a non-zero size). A `SELECT count(*)` run directly in the query editor returns the true row count, and the built-in `Profile Table` action, which runs its own scan rather than reading catalog statistics, also reports the correct row count.
+- **The `Table Statistics` view reads 0 rows and 0 bytes for the hypertable.** Open it from `Monitoring` > `Tables`. The index is not affected: it reports a non-zero size. The hypertable's row count next to its name in the object browser is also missing until the table is analyzed, and reads 0 afterwards.
 
-  <Image src={imgLibredbStudioHypertableZeroRows} alt="LibreDB Studio's Monitoring > Tables view for the sensor_readings hypertable, with Table Statistics showing 0 rows and 0 bytes while its index correctly shows a non-zero 8192 bytes" />
+  <Image src={imgLibredbStudioHypertableZeroRows} alt="LibreDB Studio's Monitoring > Tables view filtered to sensor_readings, with Table Statistics showing 0 rows and 0 bytes for the hypertable while its index correctly shows 8192 bytes" />
 
-  <Image src={imgLibredbStudioProfileTableCorrectCount} alt="LibreDB Studio's Data Profiler for the same sensor_readings table reporting the correct Total Rows count of 8,641, in contrast to the object browser's 0-row reading" />
-- **Every chunk appears as its own table and its own index** in the object browser and in the monitoring dashboard's table list, alongside the internal `_timescaledb_catalog` and `_timescaledb_cache` schemas. On the hypertable used to verify this page, that's 60 objects in the browser for one user table.
-- **The overview and monitoring pages show the {C.PG} version, not the {C.TIMESCALE_DB} extension version.** A service running `TimescaleDB 2.29.2 on PostgreSQL 17.11` shows only `PostgreSQL 17.11`.
+- **A direct query or `Profile Table` reports the true row count.** A `SELECT count(*)` run in the query editor returns the real number. So does `Profile Table`, in the `⋮` menu next to the table's name in the object browser, because it runs its own scan rather than reading catalog statistics.
 
-None of this blocks querying or browsing a hypertable, an ordinary `SELECT` returns real data and real row counts either way, but the passive statistics shown in the browser and dashboard undercount a hypertable specifically. Query directly (`count(*)`, `pg_total_relation_size()` against the chunks, or `Profile Table`) when you need an accurate number.
+  <Image src={imgLibredbStudioProfileTableCorrectCount} alt="LibreDB Studio's Data Profiler dialog for public.sensor_readings reporting the correct Total Rows count of 8,641 across 4 columns" />
+- **The overview and monitoring pages show the {C.PG} version, not the {C.TIMESCALE_DB} extension version.** A service running `TimescaleDB 2.30.2 on PostgreSQL 17.11` shows only the `PostgreSQL 17.11` version string.
+
+None of this blocks querying or browsing a hypertable, an ordinary `SELECT` returns real data and real row counts either way, but the passive statistics shown in the browser and dashboard undercount a hypertable specifically. Query directly (`count(*)`, `hypertable_size()`, or `Profile Table`) when you need an accurate number.
 
 ## Next steps
 
