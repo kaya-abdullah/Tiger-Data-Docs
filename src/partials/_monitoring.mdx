@@ -125,11 +125,9 @@ To view insights, select your {C.SERVICE_SHORT}, then click `Monitoring` > `Insi
 
 <ThemeImage light={imgInsightsOverviewTigerConsoleLight} dark={imgInsightsOverviewTigerConsoleDark} alt="Insights" />
 
-Insights include `Metrics`, `Current lock contention`, and `Queries`.
+Insights include `Metrics` and `Queries`.
 
 `Metrics` provides a visual representation of CPU, memory, and storage input/output usage over time. It also overlays the execution times of the top three queries matching your search. This helps correlate query executions with resource utilization. Select an area of the graph to zoom into a specific time frame.
-
-`Current lock contention` shows how many queries or transactions are currently waiting for locks held by other queries or transactions.
 
 `Queries` displays the top 50 queries matching your search. Choose the columns with `Columns to show`, and whether the per-query metrics show the median or P95 with the selector next to it. This includes a whole range of metrics:
 
@@ -223,6 +221,8 @@ To view connections, select your {C.SERVICE_SHORT} in {C.CONSOLE}, then click `M
 <ThemeImage light={imgTigerConsoleServiceConnectionsLight} dark={imgTigerConsoleServiceConnectionsDark} alt="Connections" />
 
 Click `Terminate connection`, the trash icon next to a connection in the list, to terminate it. A lock icon means that a connection cannot be terminated; hover over the icon to see the reason.
+
+`Current lock contention` shows how many queries or transactions are currently waiting for locks held by other queries or transactions. Expand or collapse it with the section heading.
 
 ## Recommendations
 

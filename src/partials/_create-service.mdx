@@ -18,6 +18,17 @@ a region; see [supported regions](/get-started/supported-regions).
 To create a {C.SERVICE_SHORT} without {C.TIMESCALE_DB} and the AI extensions, click
 `Create with plain PostgreSQL`.
 
+<Callout variant="note">
+
+If your {C.PROJECT_SHORT} has access to the `Fluid` storage engine public preview, this step asks you to
+choose a storage engine alongside the region, and `Environment` moves into the compute step. `Standard`
+is the current platform: all regions, with a 99.9% uptime guarantee. `Fluid` adds database branching for
+development and agentic workflows, and higher read and write performance. During public preview, `Fluid`
+runs in `US East (N. Virginia)` only, has no uptime guarantee, requires paid compute, and does not
+support {C.VPC} peering or plain {C.PG}.
+
+</Callout>
+
 </NumberedItem>
 
 <NumberedItem title="Choose `Development` or `Production`, then click `Continue`.">
