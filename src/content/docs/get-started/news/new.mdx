@@ -121,11 +121,127 @@ import imgCreateCrossRegionBackupInTigerConsoleAzure from "../../../../assets/im
 import imgHighPerformanceStorageTigerConsole from "../../../../assets/images/build/data-management/high-performance-storage-tiger-console.png";
 import imgCmdKCommandPaletteTigerConsole from "../../../../assets/images/get-started/news/cmd-k-command-palette-tiger-console.png";
 import imgTigerlakeGenericRestCatalogSetup from "../../../../assets/images/get-started/news/tigerlake-generic-rest-catalog-setup.png";
+import imgBackupsExtendedRetention from "../../../../assets/images/get-started/news/backups-extended-retention.png";
 
-<ChangelogFilter />
+<ChangelogFilter />º
 
 <div class="changelog-page-toc">
 
+## Tiger CLI 0.25: clearer command names, service rename and delete from agents, and a feedback command
+
+<ChangelogEntry
+  title="Tiger CLI 0.25: clearer command names, service rename and delete from agents, and a feedback command"
+  date="2026-09-21"
+  tags={["new-feature", "cli-mcp"]}
+>
+<h2 slot="heading" class="changelog-entry__title">Tiger CLI 0.25: clearer command names, service rename and delete from agents, and a feedback command</h2>
+
+Tiger CLI 0.25 renames several commands for clarity, closes the gap between the CLI and Tiger MCP on service management, and cleans up the CLI's output.
+
+- **Clearer command names**: `tiger db connect` is now `tiger db psql` (it requires a local `psql`, unlike `tiger db query`), `tiger db connection-string` is `tiger db uri`, `tiger db test-connection` is `tiger db ping`, and `tiger config show` is `tiger config list`. Every old name keeps working as an alias, so existing scripts are unaffected.
+- **`tiger service rename`**: rename a service without touching its ID, endpoints, or stored credentials. A paired `service_rename` MCP tool does the same from your agent.
+- **`service_delete` MCP tool**: agents can now delete services. Deleting a service tagged PROD prompts you through the MCP client to type the service ID back before it proceeds; if the client can't prompt, the deletion is refused. The CLI's `tiger service delete` also drops its `--no-wait` and `--wait-timeout` flags, since the API removes the service as soon as it accepts the deletion.
+- **`environment` parameter on `service_create` and `service_fork` MCP tools**: agents can tag new services and forks as DEV or PROD, matching the CLI's `--environment` flag, with `read_only=prod` refusing PROD requests.
+- **`tiger feedback`**: send feedback or a bug report to the Tiger Data team straight from the terminal.
+- **Devin support**: `tiger mcp install devin` configures Tiger MCP for the Devin client.
+- **Cleaner output**: CLI status messages drop the emoji and filler for a plain, professional tone.
+
+To upgrade, run `tiger upgrade` or use your package manager. For all commands and flags, see the [Tiger CLI reference](/reference/tiger-cloud/tiger-cli).
+
+</ChangelogEntry>
+
+## Extended backup retention and point-in-time recovery
+
+<ChangelogEntry
+  title="Extended backup retention and point-in-time recovery"
+  date="2026-09-16"
+  tags={["new-feature"]}
+>
+<h2 slot="heading" class="changelog-entry__title">Extended backup retention and point-in-time recovery</h2>
+
+Tiger Cloud now offers extended backup retention on the Enterprise plan, enabling longer compliance and audit windows.
+
+All services on the Enterprise plan include 14 days of backups and point-in-time recovery by default. You can extend the retention period up to 180 days to meet longer compliance requirements.
+
+Extended retention includes full backups and WAL files, which enable point-in-time recovery down to the second for any point within your retention window. The recovery window for [point-in-time recovery forks](/deploy/tiger-cloud/tiger-cloud-aws/high-availability/backup-restore#recover-to-a-point-in-time) matches your retention period: if you set retention to 90 days, backups will accumulate to cover that period, and you can fork your service to any point in the previous 90 days.
+
+When you extend the retention period, backups and WAL accumulate until they cover it in full. When you shorten it, backups outside the new period are deleted and are no longer available for recovery.
+
+Extended backup retention beyond the included 14 days is charged at $0.03 per GB per month based on the additional storage consumed.
+
+<Image src={imgBackupsExtendedRetention} alt="Backup and restore screen in Tiger Console, showing how backup retention window can be extended" />
+
+</ChangelogEntry>
+
+## Automatic replica management during major version upgrades
+
+<ChangelogEntry
+  title="Automatic replica management during major version upgrades"
+  date="2026-09-14"
+  tags={["improvement"]}
+>
+<h2 slot="heading" class="changelog-entry__title">Automatic replica management during major version upgrades</h2>
+
+Tiger Cloud now automatically handles replicas during major Postgres version upgrades.
+
+When you upgrade your service, we automatically spin down any HA replicas or read replicas, perform the upgrade, and bring them back up with the new version. This eliminates the need to manually remove and recreate replicas, and keeps your replica connection strings unchanged throughout the upgrade process.
+
+</ChangelogEntry>
+
+## Revoke sessions from Tiger Console
+
+<ChangelogEntry
+  title="Revoke sessions from Tiger Console"
+  date="2026-09-09"
+  tags={["new-feature", "security"]}
+>
+<h2 slot="heading" class="changelog-entry__title">Revoke sessions from Tiger Console</h2>
+
+You can now see and revoke your account's active sessions directly in Tiger Console. This is particularly useful for revoking Tiger CLI and Tiger MCP access: every `tiger auth login` appears as a session, so you can sign out a CLI or an AI agent on another machine without touching that machine.
+
+To review your sessions, click your name in the top right corner of Tiger Console and select `Account settings`. The `Active sessions` list shows every signed-in device, browser and CLI alike, with its location, sign-in time, and last activity. Revoke any session you don't recognize or no longer need, or click `Revoke all other sessions` to sign out everything except your current browser.
+
+See [Active sessions](/deploy/tiger-cloud/tiger-cloud-aws/security/overview#active-sessions) for details.
+
+</ChangelogEntry>
+
+## Tiger CLI 0.24: db query command, device code login, and GitHub Copilot support
+
+<ChangelogEntry
+  title="Tiger CLI 0.24: db query command, device code login, and GitHub Copilot support"
+  date="2026-09-09"
+  tags={["new-feature", "cli-mcp"]}
+>
+<h2 slot="heading" class="changelog-entry__title">Tiger CLI 0.24: db query command, device code login, and GitHub Copilot support</h2>
+
+Tiger CLI 0.24 makes it easier to run SQL from the terminal and to log in from machines without a browser.
+
+- **`tiger db query`**: run SQL against a service directly from the terminal, with no local `psql` required. Pass the query with `--command`, point `--file` at a `.sql` file, or pipe it through stdin, and get results as a `psql`-style table, JSON, or YAML. The matching MCP tool is renamed from `db_execute_query` to `db_query`, gains the same `file` input, and now returns values exactly as PostgreSQL's text format renders them. See the [`tiger db query` reference](/reference/tiger-cloud/tiger-cli#tiger-db-query).
+- **Device code login**: `tiger auth login --headless` prints a short code and a URL, and you authorize from a browser on any machine. This makes logging in from SSH sessions, containers, and remote development environments work; the browser login only completes when the browser and the CLI are on the same machine. If the browser cannot be opened, `tiger auth login` falls back to the device code flow automatically.
+- **GitHub Copilot support**: `tiger mcp install copilot` configures Tiger MCP for the GitHub Copilot CLI, and the Copilot desktop app picks up the same configuration.
+- **`--version-check` flag**: the global `--skip-update-check` flag is renamed to `--version-check` to match the `version_check` configuration key; disabling the startup update check is now `--version-check=false`. The old flag still works as a hidden alias.
+
+To upgrade, run `tiger upgrade` or use your package manager. For all commands and flags, see the [Tiger CLI reference](/reference/tiger-cloud/tiger-cli).
+
+</ChangelogEntry>
+
+## Tiger CLI 0.23: protect production services from writes, list your projects
+
+<ChangelogEntry
+  title="Tiger CLI 0.23: protect production services from writes, list your projects"
+  date="2026-09-01"
+  tags={["new-feature", "cli-mcp"]}
+>
+<h2 slot="heading" class="changelog-entry__title">Tiger CLI 0.23: protect production services from writes, list your projects</h2>
+
+Tiger CLI 0.23 makes read-only mode production-aware and adds a command to list your projects.
+
+- **Read-only modes**: the `read_only` configuration option now takes three modes instead of a boolean: `all` protects every service, `prod` protects only services tagged PROD, and `off` (the default) protects none. With `read_only=prod`, an AI agent can create and modify development services freely while production stays protected: mutating commands and MCP tools are refused for PROD-tagged services, and database sessions against them open in Tiger Cloud's immutable read-only mode. The old boolean values keep working (`true` means `all`, `false` means `off`), and your first interactive `tiger auth login` now asks which mode you want. See [Restrict Tiger MCP to read-only](/get-started/quickstart/mcp-cli#restrict-tiger-mcp-to-read-only).
+- **`tiger project list`**: list the projects you have access to, with the active one marked. See the [`tiger project list` reference](/reference/tiger-cloud/tiger-cli#tiger-project-list).
+
+To upgrade, run `tiger upgrade` or use your package manager.
+
+</ChangelogEntry>
 
 ## Billing page now segments costs by service and adds a timeline view
 
@@ -1751,6 +1867,8 @@ All new services use TimescaleDB v2.20 with significant performance improvements
 - Up to 6x faster point queries with new bloom filters
 - Up to 2500x faster DISTINCT operations with SkipScan
 - 8x more efficient Boolean column storage
+
+**Breaking change:** on continuous aggregates, `timescaledb.chunk_time_interval` is renamed to `timescaledb.chunk_interval`. The old name is rejected, not aliased, so statements using it fail after the upgrade.
 
 For details, see the [TimescaleDB v2.20 release notes](https://github.com/timescale/timescaledb/releases/tag/2.20.0).
 
